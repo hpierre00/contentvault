@@ -223,19 +223,17 @@
     var userPrompt = 'Create 3 distinct variations of a ' + contentTypeLabel + ' for a ' + audienceLabel + ' focused on the topic of "' + topicLabel + '" for the ' + marketLabel + ' market' + cityContext + '. Tone: ' + tone + '.\n\nFor each variation:\n- Label it clearly as VARIATION 1, VARIATION 2, VARIATION 3\n- Write the complete, ready-to-use content\n- Include relevant hashtags if it is a social post\n- Add a [PLACEHOLDER] note for anything the user should customize (their name, their city, specific stats)\n- Keep each variation meaningfully different in angle or hook\n\nIMPORTANT: Make the content specific and valuable. Avoid generic advice. Use real numbers, real scenarios, and real insights from the industry. Do not include any preamble — go straight into the variations.';
 
     try {
-      var response = await fetch('https://api.anthropic.com/v1/messages', {
+      var response = await fetch('https://mxyepucitjzleaziizkr.supabase.co/functions/v1/cv-generate-v2', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          system: systemPrompt,
-          messages: [{ role: 'user', content: userPrompt }]
-        })
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14eWVwdWNpdGp6bGVhemlpemtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0Njk1ODIsImV4cCI6MjA5MDA0NTU4Mn0.oQr_hO5fVkOhGcJ2u3mqQDJIfw9cAdXwfVAAXOf96q4'
+        },
+        body: JSON.stringify({ audience, contentType, topic, market, city, tone })
       });
 
       var data = await response.json();
-      var text = data.content && data.content[0] ? data.content[0].text : '';
+      var text = data.text || '';
 
       if (!text) throw new Error('No content returned');
 
