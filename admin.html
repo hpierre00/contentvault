@@ -4,310 +4,29 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ContentVault — Admin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
   <style>
-    :root {
-      --void: #060810;
-      --deep: #0D1320;
-      --surface: #111827;
-      --panel: #1A2235;
-      --border: rgba(255,255,255,0.07);
-      --amber: #F59E0B;
-      --amber-dim: rgba(245,158,11,0.1);
-      --electric: #38BDF8;
-      --green: #22C55E;
-      --green-dim: rgba(34,197,94,0.1);
-      --red: #EF4444;
-      --red-dim: rgba(239,68,68,0.1);
-      --white: #F8FAFC;
-      --gray: #94A3B8;
-      --gray-dim: #475569;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--void); color: var(--white); font-family: 'DM Mono', monospace; font-weight: 300; line-height: 1.6; }
-
-    /* LOGIN */
-    .login-wrap {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--void);
-    }
-    .login-card {
-      background: var(--deep);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 2.5rem;
-      width: 100%;
-      max-width: 360px;
-    }
-    .login-logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.2rem;
-      margin-bottom: 0.3rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .login-dot { width: 8px; height: 8px; background: var(--amber); border-radius: 50%; }
-    .login-sub { font-size: 0.65rem; color: var(--gray-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 2rem; }
-    .login-label { font-size: 0.65rem; letter-spacing: 0.15em; color: var(--amber); text-transform: uppercase; margin-bottom: 0.4rem; display: block; }
-    .login-input {
-      width: 100%;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      color: var(--white);
-      font-family: 'DM Mono', monospace;
-      font-size: 0.85rem;
-      padding: 0.75rem 1rem;
-      margin-bottom: 1rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .login-input:focus { border-color: var(--amber); }
-    .login-btn {
-      width: 100%;
-      padding: 0.8rem;
-      background: var(--amber);
-      color: var(--void);
-      border: none;
-      border-radius: 2px;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .login-btn:hover { background: #FCD34D; }
-    .login-error { font-size: 0.72rem; color: var(--red); margin-top: 0.6rem; text-align: center; }
-
-    /* DASHBOARD */
-    .dashboard { display: none; min-height: 100vh; }
-
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(6,8,16,0.95);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; display: flex; align-items: center; gap: 0.4rem; }
-    .nav-badge { font-size: 0.6rem; letter-spacing: 0.15em; color: var(--amber); border: 1px solid var(--amber); padding: 0.2rem 0.5rem; border-radius: 2px; }
-    .nav-logout { font-size: 0.65rem; color: var(--gray-dim); cursor: pointer; letter-spacing: 0.1em; text-transform: uppercase; background: none; border: none; color: var(--gray-dim); transition: color 0.2s; }
-    .nav-logout:hover { color: var(--red); }
-
-    .main { padding: 2rem; max-width: 1200px; margin: 0 auto; }
-
-    /* STAT CARDS */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .stat-card {
-      background: var(--deep);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1.4rem;
-      transition: border-color 0.2s;
-    }
-    .stat-card:hover { border-color: rgba(245,158,11,0.3); }
-    .stat-label { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--gray-dim); text-transform: uppercase; margin-bottom: 0.5rem; }
-    .stat-value { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; color: var(--amber); line-height: 1; margin-bottom: 0.3rem; }
-    .stat-sub { font-size: 0.65rem; color: var(--gray-dim); }
-
-    /* MRR CARD */
-    .mrr-card {
-      background: var(--panel);
-      border: 1px solid rgba(245,158,11,0.3);
-      border-radius: 4px;
-      padding: 1.4rem;
-    }
-    .stat-value.green { color: var(--green); }
-
-    /* SECTION */
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1rem;
-    }
-    .section-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .section-title::before { content: '//'; color: var(--gray-dim); font-family: 'DM Mono', monospace; font-size: 0.75rem; }
-    .refresh-btn {
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      color: var(--amber);
-      background: none;
-      border: 1px solid rgba(245,158,11,0.3);
-      padding: 0.3rem 0.7rem;
-      border-radius: 2px;
-      cursor: pointer;
-      font-family: 'DM Mono', monospace;
-      text-transform: uppercase;
-      transition: background 0.2s;
-    }
-    .refresh-btn:hover { background: var(--amber-dim); }
-
-    /* TABLE */
-    .table-wrap {
-      background: var(--deep);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 2rem;
-    }
-    table { width: 100%; border-collapse: collapse; }
-    thead { background: var(--surface); }
-    th {
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      color: var(--gray-dim);
-      text-transform: uppercase;
-      padding: 0.8rem 1rem;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-    }
-    td {
-      font-size: 0.78rem;
-      color: var(--gray);
-      padding: 0.9rem 1rem;
-      border-bottom: 1px solid var(--border);
-      vertical-align: middle;
-    }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: var(--panel); }
-    .badge {
-      display: inline-block;
-      font-size: 0.58rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.2rem 0.5rem;
-      border-radius: 2px;
-    }
-    .badge-agent { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
-    .badge-lo { background: var(--electric-dim, rgba(56,189,248,0.1)); color: var(--electric); border: 1px solid rgba(56,189,248,0.2); }
-    .badge-partnership { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
-    .badge-lead { background: var(--panel); color: var(--gray-dim); border: 1px solid var(--border); }
-    .email-link { color: var(--white); text-decoration: none; }
-    .email-link:hover { color: var(--amber); }
-
-    /* ACTION BUTTONS */
-    .action-btn {
-      font-size: 0.62rem;
-      letter-spacing: 0.08em;
-      padding: 0.25rem 0.6rem;
-      border-radius: 2px;
-      cursor: pointer;
-      font-family: 'DM Mono', monospace;
-      text-transform: uppercase;
-      border: none;
-      transition: opacity 0.2s;
-      text-decoration: none;
-      display: inline-block;
-    }
-    .action-btn:hover { opacity: 0.8; }
-    .btn-send { background: var(--amber); color: var(--void); }
-    .btn-delete { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
-
-    /* EMPTY STATE */
-    .empty {
-      text-align: center;
-      padding: 3rem;
-      color: var(--gray-dim);
-      font-size: 0.78rem;
-    }
-
-    /* LOADING */
-    .loading {
-      text-align: center;
-      padding: 2rem;
-      color: var(--gray-dim);
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-    }
-    .loading::after {
-      content: '';
-      animation: dots 1.5s steps(3, end) infinite;
-    }
-    @keyframes dots {
-      0%, 20% { content: '.'; }
-      40% { content: '..'; }
-      60%, 100% { content: '...'; }
-    }
-
-    /* TOAST */
-    .toast {
-      position: fixed;
-      bottom: 1.5rem;
-      right: 1.5rem;
-      background: var(--panel);
-      color: var(--white);
-      padding: 0.8rem 1.2rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      border-left: 3px solid var(--amber);
-      opacity: 0;
-      transform: translateY(8px);
-      transition: all 0.3s;
-      z-index: 9999;
-    }
-    .toast.show { opacity: 1; transform: translateY(0); }
-
-    /* PAYMENT LINKS */
-    .payment-links {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .payment-link-card {
-      background: var(--deep);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1.2rem;
-    }
-    .payment-link-label { font-size: 0.6rem; letter-spacing: 0.15em; color: var(--amber); text-transform: uppercase; margin-bottom: 0.5rem; }
-    .payment-link-name { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
-    .payment-link-price { font-size: 1.4rem; font-weight: 800; color: var(--amber); font-family: 'Syne', sans-serif; margin-bottom: 0.8rem; }
-    .copy-btn {
-      width: 100%;
-      padding: 0.5rem;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      color: var(--gray);
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .copy-btn:hover { border-color: var(--amber); color: var(--amber); }
-
-    @media (max-width: 900px) {
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .payment-links { grid-template-columns: 1fr; }
-    }
+    body { background: var(--off-white); }
+    .main { padding: 2rem; max-width: 1280px; margin: 0 auto; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 600; color: var(--navy); }
+    .refresh-btn { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--navy); background: var(--white); border: 1px solid var(--gray-border); padding: 0.4rem 0.9rem; border-radius: 2px; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; transition: all 0.2s; }
+    .refresh-btn:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+    .action-btn { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em; padding: 0.3rem 0.7rem; border-radius: 2px; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; text-transform: uppercase; border: none; transition: opacity 0.2s; text-decoration: none; display: inline-block; }
+    .btn-copy { background: var(--gold-dim); color: #92740A; border: 1px solid var(--gold-border); }
+    .btn-email { background: rgba(10,22,40,0.06); color: var(--navy); border: 1px solid rgba(10,22,40,0.15); }
+    .payment-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .payment-card { background: var(--white); border: 1px solid var(--gray-border); border-radius: 4px; padding: 1.4rem; box-shadow: var(--shadow-sm); }
+    .payment-card.featured { border-color: var(--gold); border-width: 2px; }
+    .copy-link-btn { width: 100%; padding: 0.55rem; background: var(--white); border: 1px solid var(--gray-border); border-radius: 2px; color: var(--gray); font-family: 'IBM Plex Sans', sans-serif; font-size: 0.68rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+    .copy-link-btn:hover { border-color: var(--navy); color: var(--navy); }
+    .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--off-white); }
+    .login-card { background: var(--white); border: 1px solid var(--gray-border); border-radius: 4px; padding: 2.5rem; width: 100%; max-width: 360px; box-shadow: var(--shadow-md); }
+    .login-error { font-size: 0.75rem; color: #DC2626; margin-top: 0.6rem; text-align: center; }
+    .empty { text-align: center; padding: 3rem; color: var(--gray-light); font-size: 0.83rem; }
+    .loading { text-align: center; padding: 2rem; color: var(--gray-light); font-size: 0.78rem; }
+    @media (max-width: 900px) { .stats-grid { grid-template-columns: 1fr 1fr; } .payment-links { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -315,45 +34,48 @@
 <!-- LOGIN -->
 <div class="login-wrap" id="loginWrap">
   <div class="login-card">
-    <div class="login-logo"><span class="login-dot"></span>ContentVault</div>
-    <div class="login-sub">Admin Dashboard</div>
-    <label class="login-label">Password</label>
-    <input type="password" class="login-input" id="loginInput" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')login()"/>
-    <button class="login-btn" onclick="login()">→ Access Dashboard</button>
+    <div style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:600; color:var(--navy); margin-bottom:0.2rem;">Content<span style="color:var(--gold);">Vault</span></div>
+    <div style="font-size:0.62rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:var(--gray); margin-bottom:2rem;">Admin Dashboard</div>
+    <label class="cv-label">Password</label>
+    <input type="password" class="cv-input" id="loginInput" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')login()"/>
+    <button class="btn-navy" onclick="login()" style="width:100%;">Access Dashboard →</button>
     <div class="login-error" id="loginError"></div>
   </div>
 </div>
 
 <!-- DASHBOARD -->
-<div class="dashboard" id="dashboard">
-  <nav>
-    <div class="nav-logo"><span class="login-dot"></span>ContentVault <span class="nav-badge">Admin</span></div>
-    <button class="nav-logout" onclick="logout()">Logout</button>
+<div id="dashboard" style="display:none;">
+  <nav class="cv-nav">
+    <a href="/" class="cv-nav-logo">Content<span>Vault</span></a>
+    <div class="cv-nav-links">
+      <span style="font-size:0.72rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; background:var(--gold-dim); color:#92740A; padding:0.3rem 0.7rem; border-radius:2px; border:1px solid var(--gold-border);">Admin</span>
+      <a href="/generate.html" class="cv-nav-link">Content Generator</a>
+      <button class="cv-nav-cta" onclick="logout()">Logout</button>
+    </div>
   </nav>
 
   <div class="main">
-
     <!-- STATS -->
-    <div class="stats-grid" id="statsGrid">
-      <div class="stat-card">
-        <div class="stat-label">Total Signups</div>
-        <div class="stat-value" id="statTotal">—</div>
-        <div class="stat-sub">All time</div>
+    <div class="stats-grid" style="margin-top:1.5rem;">
+      <div class="cv-card">
+        <div class="cv-stat-label">Total Signups</div>
+        <div class="cv-stat-value" id="statTotal">—</div>
+        <div style="font-size:0.72rem; color:var(--gray); margin-top:0.3rem;">All time</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Lead Magnets</div>
-        <div class="stat-value" id="statLeads">—</div>
-        <div class="stat-sub">Free template requests</div>
+      <div class="cv-card">
+        <div class="cv-stat-label">Lead Magnets</div>
+        <div class="cv-stat-value" id="statLeads">—</div>
+        <div style="font-size:0.72rem; color:var(--gray); margin-top:0.3rem;">Free template requests</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Founding Members</div>
-        <div class="stat-value" id="statFounders">—</div>
-        <div class="stat-sub">Spots reserved</div>
+      <div class="cv-card">
+        <div class="cv-stat-label">Founding Members</div>
+        <div class="cv-stat-value" id="statFounders">—</div>
+        <div style="font-size:0.72rem; color:var(--gray); margin-top:0.3rem;">Spots reserved</div>
       </div>
-      <div class="mrr-card stat-card">
-        <div class="stat-label">Est. MRR</div>
-        <div class="stat-value green" id="statMRR">—</div>
-        <div class="stat-sub">If all founders convert</div>
+      <div class="cv-card" style="background:var(--navy); border-color:var(--navy);">
+        <div class="cv-stat-label" style="color:rgba(255,255,255,0.5);">Est. MRR</div>
+        <div class="cv-stat-value gold" id="statMRR">—</div>
+        <div style="font-size:0.72rem; color:rgba(255,255,255,0.4); margin-top:0.3rem;">If all founders convert</div>
       </div>
     </div>
 
@@ -362,23 +84,23 @@
       <div class="section-title">Payment Links</div>
     </div>
     <div class="payment-links">
-      <div class="payment-link-card">
-        <div class="payment-link-label">For Realtors</div>
-        <div class="payment-link-name">Agent Plan</div>
-        <div class="payment-link-price">$49/mo</div>
-        <button class="copy-btn" onclick="copyLink('https://buy.stripe.com/bJe5kE7Aagisc4VemU3VC01', this)">Copy Payment Link</button>
+      <div class="payment-card">
+        <div style="font-size:0.6rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:0.4rem;">For Realtors</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:600; color:var(--navy); margin-bottom:0.2rem;">Agent Plan</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--navy); margin-bottom:0.8rem;">$49<span style="font-size:1rem; font-weight:300;">/mo</span></div>
+        <button class="copy-link-btn" onclick="copyLink('https://buy.stripe.com/bJe5kE7Aagisc4VemU3VC01', this)">Copy Payment Link</button>
       </div>
-      <div class="payment-link-card" style="border-color: rgba(245,158,11,0.3)">
-        <div class="payment-link-label">Agent + LO Pair</div>
-        <div class="payment-link-name">Partnership Plan</div>
-        <div class="payment-link-price">$69/mo</div>
-        <button class="copy-btn" onclick="copyLink('https://buy.stripe.com/4gM9AU3jU7LW3yp0w43VC03', this)">Copy Payment Link</button>
+      <div class="payment-card featured">
+        <div style="font-size:0.6rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:0.4rem;">Agent + LO Pair</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:600; color:var(--navy); margin-bottom:0.2rem;">Partnership Plan</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--navy); margin-bottom:0.8rem;">$69<span style="font-size:1rem; font-weight:300;">/mo</span></div>
+        <button class="copy-link-btn" onclick="copyLink('https://buy.stripe.com/4gM9AU3jU7LW3yp0w43VC03', this)">Copy Payment Link</button>
       </div>
-      <div class="payment-link-card">
-        <div class="payment-link-label">For Loan Officers</div>
-        <div class="payment-link-name">LO Plan</div>
-        <div class="payment-link-price">$49/mo</div>
-        <button class="copy-btn" onclick="copyLink('https://buy.stripe.com/6oU8wQ1bMfeoc4VfqY3VC02', this)">Copy Payment Link</button>
+      <div class="payment-card">
+        <div style="font-size:0.6rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:0.4rem;">For Loan Officers</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:600; color:var(--navy); margin-bottom:0.2rem;">LO Plan</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--navy); margin-bottom:0.8rem;">$49<span style="font-size:1rem; font-weight:300;">/mo</span></div>
+        <button class="copy-link-btn" onclick="copyLink('https://buy.stripe.com/6oU8wQ1bMfeoc4VfqY3VC02', this)">Copy Payment Link</button>
       </div>
     </div>
 
@@ -387,92 +109,58 @@
       <div class="section-title">All Signups</div>
       <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
     </div>
-    <div class="table-wrap">
-      <div class="loading" id="loadingMsg">Loading signups</div>
-      <table id="signupsTable" style="display:none">
+    <div class="cv-table-wrap" style="margin-bottom:2rem;">
+      <div class="loading" id="loadingMsg">Loading signups...</div>
+      <table class="cv-table" id="signupsTable" style="display:none;">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Type</th>
-            <th>Plan</th>
-            <th>Market</th>
-            <th>Signed Up</th>
-            <th>Actions</th>
+            <th>Name</th><th>Email</th><th>Type</th><th>Plan</th><th>Market</th><th>Signed Up</th><th>Actions</th>
           </tr>
         </thead>
         <tbody id="signupsBody"></tbody>
       </table>
-      <div class="empty" id="emptyMsg" style="display:none">No signups yet. Share the link and they'll appear here.</div>
+      <div class="empty" id="emptyMsg" style="display:none;">No signups yet. Share the link and they'll appear here.</div>
     </div>
 
-    <!-- CANVA TEMPLATE LINKS -->
+    <!-- CANVA TEMPLATES -->
     <div class="section-header">
       <div class="section-title">Canva Template Links</div>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Template</th><th>Audience</th><th>Link</th></tr>
-        </thead>
+    <div class="cv-table-wrap" style="margin-bottom:2rem;">
+      <table class="cv-table">
+        <thead><tr><th>Template</th><th>Audience</th><th>Action</th></tr></thead>
         <tbody>
-          <tr>
-            <td>5 Things to Know Before Buying a Home</td>
-            <td><span class="badge badge-agent">Agent</span></td>
-            <td><button class="copy-btn" style="width:auto;padding:0.2rem 0.6rem;" onclick="copyLink('https://www.canva.com/design/DAHFct5CmE8/copy', this)">Copy</button></td>
-          </tr>
-          <tr>
-            <td>Just Sold Announcement</td>
-            <td><span class="badge badge-agent">Agent</span></td>
-            <td><button class="copy-btn" style="width:auto;padding:0.2rem 0.6rem;" onclick="copyLink('https://www.canva.com/design/DAHFcj_wYvE/copy', this)">Copy</button></td>
-          </tr>
-          <tr>
-            <td>Monthly Market Update</td>
-            <td><span class="badge badge-agent">Agent</span></td>
-            <td><button class="copy-btn" style="width:auto;padding:0.2rem 0.6rem;" onclick="copyLink('https://www.canva.com/design/DAHFcv8TLKY/copy', this)">Copy</button></td>
-          </tr>
-          <tr>
-            <td>What Your Credit Score Means for Your Rate</td>
-            <td><span class="badge badge-lo">LO</span></td>
-            <td><button class="copy-btn" style="width:auto;padding:0.2rem 0.6rem;" onclick="copyLink('https://www.canva.com/design/DAHFco_QHG8/copy', this)">Copy</button></td>
-          </tr>
-          <tr>
-            <td>How Much Home Can You Actually Afford?</td>
-            <td><span class="badge badge-lo">LO</span></td>
-            <td><button class="copy-btn" style="width:auto;padding:0.2rem 0.6rem;" onclick="copyLink('https://www.canva.com/design/DAHFcixcM0Q/copy', this)">Copy</button></td>
-          </tr>
+          <tr><td>5 Things to Know Before Buying a Home</td><td><span class="cv-badge cv-badge-gold">Agent</span></td><td><button class="copy-link-btn" style="width:auto;padding:0.3rem 0.7rem;" onclick="copyLink('https://www.canva.com/design/DAHFct5CmE8/copy',this)">Copy Link</button></td></tr>
+          <tr><td>Just Sold Announcement</td><td><span class="cv-badge cv-badge-gold">Agent</span></td><td><button class="copy-link-btn" style="width:auto;padding:0.3rem 0.7rem;" onclick="copyLink('https://www.canva.com/design/DAHFcj_wYvE/copy',this)">Copy Link</button></td></tr>
+          <tr><td>Monthly Market Update</td><td><span class="cv-badge cv-badge-gold">Agent</span></td><td><button class="copy-link-btn" style="width:auto;padding:0.3rem 0.7rem;" onclick="copyLink('https://www.canva.com/design/DAHFcv8TLKY/copy',this)">Copy Link</button></td></tr>
+          <tr><td>What Your Credit Score Means for Your Rate</td><td><span class="cv-badge cv-badge-navy">LO</span></td><td><button class="copy-link-btn" style="width:auto;padding:0.3rem 0.7rem;" onclick="copyLink('https://www.canva.com/design/DAHFco_QHG8/copy',this)">Copy Link</button></td></tr>
+          <tr><td>How Much Home Can You Actually Afford?</td><td><span class="cv-badge cv-badge-navy">LO</span></td><td><button class="copy-link-btn" style="width:auto;padding:0.3rem 0.7rem;" onclick="copyLink('https://www.canva.com/design/DAHFcixcM0Q/copy',this)">Copy Link</button></td></tr>
         </tbody>
       </table>
     </div>
-
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="cv-toast" id="toast"></div>
 
 <script>
   const SUPABASE_URL = 'https://mxyepucitjzleaziizkr.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14eWVwdWNpdGp6bGVhemlpemtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0Njk1ODIsImV4cCI6MjA5MDA0NTU4Mn0.oQr_hO5fVkOhGcJ2u3mqQDJIfw9cAdXwfVAAXOf96q4';
   const ADMIN_PASS = 'CV2026admin!';
 
-  function showToast(msg, duration) {
-    duration = duration || 3000;
+  function showToast(msg) {
     var t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(function() { t.classList.remove('show'); }, duration);
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 3000);
   }
 
   function login() {
-    var pass = document.getElementById('loginInput').value;
-    if (pass === ADMIN_PASS) {
+    if (document.getElementById('loginInput').value === ADMIN_PASS) {
       document.getElementById('loginWrap').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
       localStorage.setItem('cv_admin', '1');
       loadData();
-    } else {
-      document.getElementById('loginError').textContent = 'Incorrect password.';
-    }
+    } else { document.getElementById('loginError').textContent = 'Incorrect password.'; }
   }
 
   function logout() {
@@ -482,7 +170,6 @@
     document.getElementById('loginInput').value = '';
   }
 
-  // Auto-login if previously authenticated
   if (localStorage.getItem('cv_admin') === '1') {
     document.getElementById('loginWrap').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
@@ -493,90 +180,45 @@
     document.getElementById('loadingMsg').style.display = 'block';
     document.getElementById('signupsTable').style.display = 'none';
     document.getElementById('emptyMsg').style.display = 'none';
-
     try {
       var res = await fetch(SUPABASE_URL + '/rest/v1/contentvault_signups?order=created_at.desc', {
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_KEY
-        }
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
       });
       var data = await res.json();
-
-      // Stats
       var total = data.length;
-      var leads = data.filter(function(r) { return r.lead_magnet; }).length;
-      var founders = data.filter(function(r) { return !r.lead_magnet; }).length;
-      var agentCount = data.filter(function(r) { return r.role === 'agent'; }).length;
-      var loCount = data.filter(function(r) { return r.role === 'lo'; }).length;
-      var partnerCount = data.filter(function(r) { return r.role === 'partnership'; }).length;
-      var mrr = (agentCount * 49) + (loCount * 49) + (partnerCount * 69);
-
+      var leads = data.filter(function(r){return r.lead_magnet;}).length;
+      var founders = data.filter(function(r){return !r.lead_magnet;}).length;
+      var agents = data.filter(function(r){return r.role==='agent';}).length;
+      var los = data.filter(function(r){return r.role==='lo';}).length;
+      var partners = data.filter(function(r){return r.role==='partnership';}).length;
       document.getElementById('statTotal').textContent = total;
       document.getElementById('statLeads').textContent = leads;
       document.getElementById('statFounders').textContent = founders;
-      document.getElementById('statMRR').textContent = '$' + mrr;
-
+      document.getElementById('statMRR').textContent = '$' + ((agents*49)+(los*49)+(partners*69));
       document.getElementById('loadingMsg').style.display = 'none';
-
-      if (data.length === 0) {
-        document.getElementById('emptyMsg').style.display = 'block';
-        return;
-      }
-
-      // Table
+      if (!data.length) { document.getElementById('emptyMsg').style.display = 'block'; return; }
       var tbody = document.getElementById('signupsBody');
       tbody.innerHTML = '';
+      var PLANS = {agent:'Agent Plan',lo:'LO Plan',partnership:'Partnership Plan'};
+      var LINKS = {agent:'https://buy.stripe.com/bJe5kE7Aagisc4VemU3VC01',lo:'https://buy.stripe.com/6oU8wQ1bMfeoc4VfqY3VC02',partnership:'https://buy.stripe.com/4gM9AU3jU7LW3yp0w43VC03'};
       data.forEach(function(row) {
-        var date = new Date(row.created_at);
-        var dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        var timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-
-        var roleBadge = '';
-        if (row.role === 'agent') roleBadge = '<span class="badge badge-agent">Agent</span>';
-        else if (row.role === 'lo') roleBadge = '<span class="badge badge-lo">LO</span>';
-        else if (row.role === 'partnership') roleBadge = '<span class="badge badge-partnership">Partnership</span>';
-        else roleBadge = '<span class="badge badge-lead">—</span>';
-
-        var typeBadge = row.lead_magnet
-          ? '<span class="badge badge-lead">Lead Magnet</span>'
-          : '<span class="badge badge-partnership">Founding Member</span>';
-
-        var paymentLink = '';
-        if (row.role === 'agent') paymentLink = 'https://buy.stripe.com/bJe5kE7Aagisc4VemU3VC01';
-        else if (row.role === 'lo') paymentLink = 'https://buy.stripe.com/6oU8wQ1bMfeoc4VfqY3VC02';
-        else if (row.role === 'partnership') paymentLink = 'https://buy.stripe.com/4gM9AU3jU7LW3yp0w43VC03';
-
-        var actions = '';
-        if (!row.lead_magnet && paymentLink) {
-          actions += '<button class="action-btn btn-send" onclick="copyLink(\'' + paymentLink + '\', this)" style="margin-right:0.4rem">Copy Payment Link</button>';
-        }
-        actions += '<a class="action-btn btn-send" href="mailto:' + row.email + '?subject=Your%20ContentVault%20templates&body=Hi%20' + (row.name || '') + ',%0A%0AHere%20are%20your%205%20free%20templates..." style="margin-right:0.4rem">Email</a>';
-
+        var d = new Date(row.created_at);
+        var dStr = d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+        var roleBadge = row.role ? '<span class="cv-badge cv-badge-'+(row.role==='lo'?'navy':'gold')+'">'+(PLANS[row.role]||row.role)+'</span>' : '<span class="cv-badge cv-badge-navy">—</span>';
+        var typeBadge = row.lead_magnet ? '<span class="cv-badge cv-badge-navy">Lead</span>' : '<span class="cv-badge cv-badge-gold">Founding</span>';
+        var actions = '<a class="action-btn btn-email" href="mailto:'+row.email+'?subject=Your%20ContentVault%20membership" style="margin-right:4px;">Email</a>';
+        if (!row.lead_magnet && LINKS[row.role]) actions += '<button class="action-btn btn-copy" onclick="copyLink(\''+LINKS[row.role]+'\',this)">Copy Link</button>';
         var tr = document.createElement('tr');
-        tr.innerHTML =
-          '<td>' + (row.name || '—') + '</td>' +
-          '<td><a class="email-link" href="mailto:' + row.email + '">' + row.email + '</a></td>' +
-          '<td>' + typeBadge + '</td>' +
-          '<td>' + roleBadge + '</td>' +
-          '<td>' + (row.market ? row.market.toUpperCase() : '—') + '</td>' +
-          '<td>' + dateStr + ' ' + timeStr + '</td>' +
-          '<td>' + actions + '</td>';
+        tr.innerHTML = '<td>'+(row.name||'—')+'</td><td><a href="mailto:'+row.email+'" style="color:var(--navy);text-decoration:none;">'+row.email+'</a></td><td>'+typeBadge+'</td><td>'+roleBadge+'</td><td>'+(row.market?row.market.toUpperCase():'—')+'</td><td>'+dStr+'</td><td>'+actions+'</td>';
         tbody.appendChild(tr);
       });
-
       document.getElementById('signupsTable').style.display = 'table';
-
-    } catch(e) {
-      document.getElementById('loadingMsg').textContent = 'Error loading data. Check connection.';
-      console.error(e);
-    }
+    } catch(e) { document.getElementById('loadingMsg').textContent = 'Error loading data.'; }
   }
 
   function copyLink(url, btn) {
     navigator.clipboard.writeText(url).then(function() {
-      var orig = btn.textContent;
-      btn.textContent = '✓ Copied';
+      var orig = btn.textContent; btn.textContent = '✓ Copied';
       showToast('Copied to clipboard');
       setTimeout(function() { btn.textContent = orig; }, 2000);
     });

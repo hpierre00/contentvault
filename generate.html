@@ -4,119 +4,57 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ContentVault — AI Content Generator</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
   <style>
-    :root {
-      --void: #060810; --deep: #0D1320; --surface: #111827; --panel: #1A2235;
-      --border: rgba(255,255,255,0.07); --amber: #F59E0B; --amber-dim: rgba(245,158,11,0.1);
-      --electric: #38BDF8; --green: #22C55E; --white: #F8FAFC; --gray: #94A3B8; --gray-dim: #475569;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--void); color: var(--white); font-family: 'DM Mono', monospace; font-weight: 300; line-height: 1.6; min-height: 100vh; }
-
-    nav {
-      background: rgba(6,8,16,0.95); backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border); padding: 0 2rem; height: 56px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; display: flex; align-items: center; gap: 0.4rem; }
-    .nav-dot { width: 8px; height: 8px; background: var(--amber); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(0.8);} }
-    .nav-badge { font-size: 0.6rem; letter-spacing: 0.15em; color: var(--electric); border: 1px solid rgba(56,189,248,0.3); padding: 0.2rem 0.5rem; border-radius: 2px; }
-
-    .main { padding: 2rem; max-width: 1000px; margin: 0 auto; }
-
-    .page-title { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; margin-bottom: 0.3rem; }
-    .page-sub { font-size: 0.78rem; color: var(--gray); margin-bottom: 2rem; line-height: 1.7; }
-
-    .generator-grid { display: grid; grid-template-columns: 340px 1fr; gap: 1.5rem; }
-
-    .controls { background: var(--deep); border: 1px solid var(--border); border-radius: 4px; padding: 1.5rem; height: fit-content; }
-    .control-label { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--amber); text-transform: uppercase; margin-bottom: 0.4rem; display: block; }
-    .control-select, .control-input {
-      width: 100%; background: var(--panel); border: 1px solid var(--border); border-radius: 2px;
-      color: var(--white); font-family: 'DM Mono', monospace; font-size: 0.78rem;
-      padding: 0.65rem 0.8rem; margin-bottom: 1rem; outline: none; transition: border-color 0.2s; appearance: none;
-    }
-    .control-select:focus, .control-input:focus { border-color: var(--amber); }
-    .control-select option { background: var(--deep); }
-
-    .generate-btn {
-      width: 100%; padding: 0.85rem; background: var(--amber); color: var(--void);
-      border: none; border-radius: 2px; font-family: 'DM Mono', monospace; font-size: 0.75rem;
-      letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.2s;
-      margin-top: 0.5rem;
-    }
-    .generate-btn:hover { background: #FCD34D; }
-    .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
+    body { background: var(--off-white); }
+    .main { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+    .generator-grid { display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; }
+    .controls { background: var(--white); border: 1px solid var(--gray-border); border-radius: 4px; padding: 1.8rem; height: fit-content; box-shadow: var(--shadow-sm); position: sticky; top: 80px; }
     .output-area { display: flex; flex-direction: column; gap: 1rem; }
-
-    .output-card {
-      background: var(--deep); border: 1px solid var(--border); border-radius: 4px; padding: 1.5rem;
-      animation: fadeIn 0.4s ease;
-    }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-    .output-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-    .output-type { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--amber); text-transform: uppercase; }
-    .copy-btn {
-      font-size: 0.62rem; letter-spacing: 0.1em; padding: 0.25rem 0.6rem; border-radius: 2px;
-      cursor: pointer; font-family: 'DM Mono', monospace; text-transform: uppercase;
-      background: transparent; border: 1px solid var(--border); color: var(--gray); transition: all 0.2s;
-    }
-    .copy-btn:hover { border-color: var(--amber); color: var(--amber); }
-
-    .output-content { font-size: 0.82rem; color: var(--gray); line-height: 1.8; white-space: pre-wrap; }
-    .output-content strong { color: var(--white); font-weight: 400; }
-
-    .empty-state {
-      background: var(--deep); border: 1px solid var(--border); border-radius: 4px;
-      padding: 3rem; text-align: center; color: var(--gray-dim); font-size: 0.78rem;
-    }
-    .empty-icon { font-size: 2rem; margin-bottom: 0.8rem; opacity: 0.5; }
-
-    .loading-card {
-      background: var(--deep); border: 1px solid var(--border); border-radius: 4px;
-      padding: 2rem; text-align: center;
-    }
-    .spinner { width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--amber); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 0.8rem; }
+    .output-card { background: var(--white); border: 1px solid var(--gray-border); border-radius: 4px; padding: 1.8rem; box-shadow: var(--shadow-sm); animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+    .output-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--gray-border); }
+    .output-type { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); }
+    .output-copy-btn { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 0.7rem; border-radius: 2px; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; background: var(--white); border: 1px solid var(--gray-border); color: var(--gray); transition: all 0.2s; }
+    .output-copy-btn:hover { border-color: var(--navy); color: var(--navy); }
+    .output-content { font-size: 0.85rem; color: var(--text-mid); line-height: 1.85; white-space: pre-wrap; }
+    .empty-state { background: var(--white); border: 1px solid var(--gray-border); border-radius: 4px; padding: 4rem 2rem; text-align: center; box-shadow: var(--shadow-sm); }
+    .loading-card { background: var(--white); border: 1px solid var(--gray-border); border-radius: 4px; padding: 3rem; text-align: center; box-shadow: var(--shadow-sm); }
+    .spinner { width: 28px; height: 28px; border: 2px solid var(--gray-border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text { font-size: 0.75rem; color: var(--gray-dim); letter-spacing: 0.1em; }
-
-    .toast {
-      position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--panel); color: var(--white);
-      padding: 0.8rem 1.2rem; border-radius: 4px; font-size: 0.75rem; border-left: 3px solid var(--amber);
-      opacity: 0; transform: translateY(8px); transition: all 0.3s; z-index: 9999;
-    }
-    .toast.show { opacity: 1; transform: translateY(0); }
-
-    @media (max-width: 800px) { .generator-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 800px) { .generator-grid { grid-template-columns: 1fr; } .controls { position: static; } }
   </style>
 </head>
 <body>
-<nav>
-  <div class="nav-logo"><span class="nav-dot"></span>ContentVault</div>
-  <span class="nav-badge">AI Content Generator</span>
+
+<nav class="cv-nav">
+  <a href="/" class="cv-nav-logo">Content<span>Vault</span></a>
+  <div class="cv-nav-links">
+    <a href="/admin.html" class="cv-nav-link">Admin</a>
+    <span style="font-size:0.72rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; background:var(--gold-dim); color:#92740A; padding:0.3rem 0.7rem; border-radius:2px; border:1px solid var(--gold-border);">AI Generator</span>
+  </div>
 </nav>
 
-<div class="main">
-  <div class="page-title">AI Content Generator</div>
-  <p class="page-sub">Generate done-for-you social media content, email templates, and video scripts for your monthly ContentVault drop. Powered by Claude.</p>
+<div class="main" style="padding-top:2.5rem;">
+  <div class="cv-section-tag">Powered by Claude</div>
+  <h1 style="font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:600; color:var(--navy); margin-bottom:0.5rem; line-height:1.1;">AI Content Generator</h1>
+  <p class="cv-body" style="margin-bottom:2rem;">Generate done-for-you social content, email templates, and video scripts for your monthly ContentVault drop. Select your parameters and get 3 ready-to-use variations instantly.</p>
 
   <div class="generator-grid">
     <!-- CONTROLS -->
     <div class="controls">
-      <label class="control-label">Audience</label>
-      <select class="control-select" id="audience">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; color:var(--navy); margin-bottom:1.2rem; padding-bottom:0.8rem; border-bottom:1px solid var(--gray-border);">Generation Settings</div>
+
+      <label class="cv-label">Audience</label>
+      <select class="cv-select" id="audience">
         <option value="agent">Real Estate Agent</option>
         <option value="lo">Loan Officer</option>
         <option value="partnership">Agent + LO Partnership</option>
       </select>
 
-      <label class="control-label">Content Type</label>
-      <select class="control-select" id="contentType">
-        <option value="social_caption">Social Media Caption (Instagram/Facebook)</option>
+      <label class="cv-label">Content Type</label>
+      <select class="cv-select" id="contentType">
+        <option value="social_caption">Social Media Caption</option>
         <option value="video_script">Reels/TikTok Video Script</option>
         <option value="email_newsletter">Email Newsletter</option>
         <option value="story_sequence">Instagram Story Sequence</option>
@@ -125,13 +63,13 @@
         <option value="co_branded">Co-Branded Partnership Post</option>
       </select>
 
-      <label class="control-label">Topic / Focus</label>
-      <select class="control-select" id="topic">
+      <label class="cv-label">Topic / Focus</label>
+      <select class="cv-select" id="topic">
         <option value="buyer_education">Buyer Education</option>
         <option value="seller_tips">Seller Tips</option>
         <option value="market_conditions">Market Conditions</option>
         <option value="mortgage_rates">Mortgage Rates</option>
-        <option value="first_time_buyers">First Time Buyers</option>
+        <option value="first_time_buyers">First-Time Buyers</option>
         <option value="investment_properties">Investment Properties</option>
         <option value="refinancing">Refinancing</option>
         <option value="credit_score">Credit Score Tips</option>
@@ -139,51 +77,51 @@
         <option value="commission_value">Agent Value / Commission Defense</option>
       </select>
 
-      <label class="control-label">Market</label>
-      <select class="control-select" id="market">
+      <label class="cv-label">Market</label>
+      <select class="cv-select" id="market">
         <option value="us">United States</option>
         <option value="canada">Canada</option>
       </select>
 
-      <label class="control-label">City / Market (optional)</label>
-      <input type="text" class="control-input" id="city" placeholder="e.g. Miami, Toronto, Dallas"/>
+      <label class="cv-label">City / Market (optional)</label>
+      <input type="text" class="cv-input" id="city" placeholder="e.g. Miami, Toronto, Dallas"/>
 
-      <label class="control-label">Tone</label>
-      <select class="control-select" id="tone">
+      <label class="cv-label">Tone</label>
+      <select class="cv-select" id="tone">
         <option value="educational">Educational & Authoritative</option>
         <option value="conversational">Conversational & Warm</option>
         <option value="urgent">Urgent & Action-Oriented</option>
         <option value="data_driven">Data-Driven & Analytical</option>
       </select>
 
-      <button class="generate-btn" id="generateBtn" onclick="generate()">→ Generate Content</button>
+      <button class="btn-navy" id="generateBtn" onclick="generate()" style="width:100%;">Generate 3 Variations →</button>
+      <p style="font-size:0.65rem; color:var(--gray-light); text-align:center; margin-top:0.6rem;">Each generation uses Claude AI</p>
     </div>
 
     <!-- OUTPUT -->
     <div class="output-area" id="outputArea">
       <div class="empty-state">
-        <div class="empty-icon">✦</div>
-        <div>Configure your options and click Generate.</div>
-        <div style="margin-top:0.4rem; font-size:0.7rem;">Each generation creates 3 variations.</div>
+        <div style="font-size:2.5rem; margin-bottom:1rem; opacity:0.3;">✦</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; color:var(--navy); margin-bottom:0.5rem;">Configure and generate.</div>
+        <div class="cv-body" style="font-size:0.8rem;">Each generation produces 3 distinct variations of your selected content type, ready to copy and use.</div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="cv-toast" id="toast"></div>
 
 <script>
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14eWVwdWNpdGp6bGVhemlpemtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0Njk1ODIsImV4cCI6MjA5MDA0NTU4Mn0.oQr_hO5fVkOhGcJ2u3mqQDJIfw9cAdXwfVAAXOf96q4';
+
   function showToast(msg) {
-    var t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
+    var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
     setTimeout(function() { t.classList.remove('show'); }, 3000);
   }
 
   function copyText(text, btn) {
     navigator.clipboard.writeText(text).then(function() {
-      var orig = btn.textContent;
-      btn.textContent = '✓ Copied';
+      var orig = btn.textContent; btn.textContent = '✓ Copied';
       showToast('Copied to clipboard');
       setTimeout(function() { btn.textContent = orig; }, 2000);
     });
@@ -198,70 +136,47 @@
     var city = document.getElementById('city').value.trim();
     var tone = document.getElementById('tone').value;
 
-    btn.disabled = true;
-    btn.textContent = 'Generating...';
-
+    btn.disabled = true; btn.textContent = 'Generating...';
     var outputArea = document.getElementById('outputArea');
-    outputArea.innerHTML = '<div class="loading-card"><div class="spinner"></div><div class="loading-text">Claude is writing your content...</div></div>';
+    outputArea.innerHTML = '<div class="loading-card"><div class="spinner"></div><div style="font-size:0.8rem; color:var(--gray);">Claude is writing your content...</div></div>';
 
-    var audienceLabel = {agent: 'Real Estate Agent', lo: 'Loan Officer', partnership: 'Agent-LO Partnership'}[audience];
-    var contentTypeLabel = {
-      social_caption: 'Social Media Caption',
-      video_script: 'Reels/TikTok Video Script',
-      email_newsletter: 'Email Newsletter',
-      story_sequence: 'Instagram Story Sequence',
-      market_update: 'Market Update Post',
-      objection_handler: 'Objection Handling Script',
-      co_branded: 'Co-Branded Partnership Post'
-    }[contentType];
-    var topicLabel = topic.replace(/_/g, ' ');
-    var marketLabel = market === 'us' ? 'United States' : 'Canada';
-    var cityContext = city ? ' specifically for the ' + city + ' market' : '';
-
-    var systemPrompt = 'You are a professional real estate and mortgage content strategist with 15 years of industry experience. You create high-performing social media content, email templates, and video scripts for real estate agents and mortgage loan officers across the US and Canada. Your content is specific, authoritative, and avoids generic advice. You understand RESPA compliance for co-marketing content. You write in a voice that is professional but human — not corporate, not salesy. Every piece of content should provide genuine value and include a natural call to action.';
-
-    var userPrompt = 'Create 3 distinct variations of a ' + contentTypeLabel + ' for a ' + audienceLabel + ' focused on the topic of "' + topicLabel + '" for the ' + marketLabel + ' market' + cityContext + '. Tone: ' + tone + '.\n\nFor each variation:\n- Label it clearly as VARIATION 1, VARIATION 2, VARIATION 3\n- Write the complete, ready-to-use content\n- Include relevant hashtags if it is a social post\n- Add a [PLACEHOLDER] note for anything the user should customize (their name, their city, specific stats)\n- Keep each variation meaningfully different in angle or hook\n\nIMPORTANT: Make the content specific and valuable. Avoid generic advice. Use real numbers, real scenarios, and real insights from the industry. Do not include any preamble — go straight into the variations.';
+    var TYPE_LABELS = {social_caption:'Social Media Caption',video_script:'Reels/TikTok Video Script',email_newsletter:'Email Newsletter',story_sequence:'Instagram Story Sequence',market_update:'Market Update Post',objection_handler:'Objection Handling Script',co_branded:'Co-Branded Partnership Post'};
 
     try {
       var response = await fetch('https://mxyepucitjzleaziizkr.supabase.co/functions/v1/cv-generate-v2', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14eWVwdWNpdGp6bGVhemlpemtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0Njk1ODIsImV4cCI6MjA5MDA0NTU4Mn0.oQr_hO5fVkOhGcJ2u3mqQDJIfw9cAdXwfVAAXOf96q4'
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
         body: JSON.stringify({ audience, contentType, topic, market, city, tone })
       });
 
       var data = await response.json();
       var text = data.text || '';
+      if (!text) throw new Error(data.error || 'No content returned');
 
-      if (!text) throw new Error('No content returned');
-
-      // Split into variations
       var variations = text.split(/VARIATION \d+/i).filter(function(v) { return v.trim().length > 50; });
-      if (variations.length === 0) variations = [text];
+      if (!variations.length) variations = [text];
 
       outputArea.innerHTML = '';
+      var typeLabel = TYPE_LABELS[contentType] || contentType;
 
       variations.forEach(function(variation, i) {
+        var content = variation.trim().replace(/^[\n:—\-]+/, '').trim();
         var card = document.createElement('div');
         card.className = 'output-card';
-        var content = variation.trim().replace(/^[\n:—-]+/, '').trim();
         card.innerHTML =
           '<div class="output-header">' +
-            '<span class="output-type">' + contentTypeLabel + ' — Variation ' + (i + 1) + '</span>' +
-            '<button class="copy-btn" onclick="copyText(this.closest(\'.output-card\').querySelector(\'.output-content\').textContent, this)">Copy</button>' +
+            '<span class="output-type">' + typeLabel + ' — Variation ' + (i+1) + '</span>' +
+            '<button class="output-copy-btn" onclick="copyText(this.closest(\'.output-card\').querySelector(\'.output-content\').textContent, this)">Copy</button>' +
           '</div>' +
           '<div class="output-content">' + escapeHtml(content) + '</div>';
         outputArea.appendChild(card);
       });
 
     } catch(e) {
-      outputArea.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠</div><div>Generation failed. Try again.</div><div style="font-size:0.7rem;margin-top:0.4rem;color:var(--gray-dim)">' + e.message + '</div></div>';
+      outputArea.innerHTML = '<div class="empty-state"><div style="font-size:2rem;margin-bottom:0.8rem;color:var(--gray-light);">⚠</div><div style="font-family:\'Cormorant Garamond\',serif;font-size:1rem;color:var(--navy);margin-bottom:0.4rem;">Generation failed.</div><div class="cv-body" style="font-size:0.8rem;">'+escapeHtml(e.message)+'</div></div>';
     }
 
-    btn.disabled = false;
-    btn.textContent = '→ Generate Content';
+    btn.disabled = false; btn.textContent = 'Generate 3 Variations →';
   }
 
   function escapeHtml(text) {
