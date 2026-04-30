@@ -240,12 +240,10 @@ async function generatePost(post){
   const tone = document.getElementById('sel-tone').value;
 
   try{
-    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+    const resp = await fetch('https://mxyepucitjzleaziizkr.supabase.co/functions/v1/cv-gen-v1',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
         messages:[{role:'user',content:buildPrompt(post,month,market,condition,tone)}]
       })
     });
