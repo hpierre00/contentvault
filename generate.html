@@ -1,187 +1,347 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ContentVault — AI Content Generator</title>
-  <link rel="stylesheet" href="styles.css"/>
-  <style>
-    body { background: var(--off-white); }
-    .main { padding: 2rem; max-width: 1100px; margin: 0 auto; }
-    .generator-grid { display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; }
-    .controls { background: var(--white); border: 1px solid var(--gray-border); border-radius: 4px; padding: 1.8rem; height: fit-content; box-shadow: var(--shadow-sm); position: sticky; top: 80px; }
-    .output-area { display: flex; flex-direction: column; gap: 1rem; }
-    .output-card { background: var(--white); border: 1px solid var(--gray-border); border-radius: 4px; padding: 1.8rem; box-shadow: var(--shadow-sm); animation: fadeIn 0.4s ease; }
-    @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
-    .output-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--gray-border); }
-    .output-type { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); }
-    .output-copy-btn { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 0.7rem; border-radius: 2px; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; background: var(--white); border: 1px solid var(--gray-border); color: var(--gray); transition: all 0.2s; }
-    .output-copy-btn:hover { border-color: var(--navy); color: var(--navy); }
-    .output-content { font-size: 0.85rem; color: var(--text-mid); line-height: 1.85; white-space: pre-wrap; }
-    .empty-state { background: var(--white); border: 1px solid var(--gray-border); border-radius: 4px; padding: 4rem 2rem; text-align: center; box-shadow: var(--shadow-sm); }
-    .loading-card { background: var(--white); border: 1px solid var(--gray-border); border-radius: 4px; padding: 3rem; text-align: center; box-shadow: var(--shadow-sm); }
-    .spinner { width: 28px; height: 28px; border: 2px solid var(--gray-border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @media (max-width: 800px) { .generator-grid { grid-template-columns: 1fr; } .controls { position: static; } }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ContentVault — AI Content Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--ink:#0F0B07;--cream:#F7F2E8;--parchment:#EDE5D4;--gold:#B5793A;--gold2:#D4964D;--blue:#1C3F6E;--blue2:#2C5F8A;--muted:#7A6E61;--border:#D4C9B0;--green:#2A7A4B;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0F0B07;color:#E8E0D0;font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;}
+header{border-bottom:1px solid rgba(255,255,255,0.08);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;letter-spacing:0.04em;}.logo span{color:var(--gold);}
+.header-sub{font-size:11px;color:rgba(232,224,208,0.35);letter-spacing:0.1em;text-transform:uppercase;}
+.main{display:grid;grid-template-columns:320px 1fr;min-height:calc(100vh - 57px);}
+/* SIDEBAR */
+.sidebar{border-right:1px solid rgba(255,255,255,0.07);padding:28px 24px;display:flex;flex-direction:column;gap:20px;}
+.field-group{display:flex;flex-direction:column;gap:6px;}
+.field-label{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(232,224,208,0.35);}
+select,input[type=text]{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:#E8E0D0;outline:none;width:100%;transition:border-color 0.2s;}
+select:focus,input:focus{border-color:var(--gold);}
+select option{background:#1a140c;color:#E8E0D0;}
+.generate-btn{background:var(--gold);color:white;border:none;padding:13px;border-radius:3px;font-size:13px;letter-spacing:0.08em;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:all 0.2s;width:100%;}
+.generate-btn:hover:not(:disabled){background:var(--gold2);}
+.generate-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.generate-all-btn{background:transparent;color:var(--gold);border:1px solid rgba(181,121,58,0.4);padding:11px;border-radius:3px;font-size:12px;letter-spacing:0.06em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;width:100%;}
+.generate-all-btn:hover:not(:disabled){border-color:var(--gold);background:rgba(181,121,58,0.08);}
+.generate-all-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.sidebar-divider{border:none;border-top:1px solid rgba(255,255,255,0.07);}
+.progress-bar{height:2px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;display:none;}
+.progress-fill{height:100%;background:var(--gold);width:0%;transition:width 0.3s;}
+.status-text{font-size:11px;color:rgba(232,224,208,0.4);min-height:16px;font-family:'DM Mono',monospace;}
+/* MAIN CONTENT */
+.content{padding:28px 32px;overflow-y:auto;}
+.content-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.content-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;}
+.month-badge{font-size:11px;color:var(--gold);background:rgba(181,121,58,0.12);border:1px solid rgba(181,121,58,0.25);padding:4px 12px;border-radius:2px;letter-spacing:0.06em;}
+.posts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;}
+/* POST CARD */
+.post-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;transition:border-color 0.2s;}
+.post-card:hover{border-color:rgba(255,255,255,0.15);}
+.post-card.generating{border-color:rgba(181,121,58,0.4);animation:pulse 1.5s ease-in-out infinite;}
+.post-card.done{border-color:rgba(42,122,75,0.4);}
+@keyframes pulse{0%,100%{border-color:rgba(181,121,58,0.2);}50%{border-color:rgba(181,121,58,0.6);}}
+.card-header{padding:14px 16px 10px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;}
+.card-week{font-size:10px;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;}
+.card-platform{font-size:10px;color:rgba(232,224,208,0.35);background:rgba(255,255,255,0.05);padding:2px 8px;border-radius:2px;}
+.card-topic{font-size:14px;font-weight:500;padding:10px 16px 4px;}
+.card-role{font-size:11px;padding:0 16px 12px;color:rgba(232,224,208,0.35);}
+.card-body{padding:0 16px 16px;}
+.card-body.empty{color:rgba(232,224,208,0.2);font-size:13px;font-style:italic;}
+.card-body.loading{color:rgba(181,121,58,0.6);font-size:12px;font-family:'DM Mono',monospace;}
+/* Generated content sections */
+.gen-section{margin-bottom:14px;}
+.gen-label{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(232,224,208,0.3);margin-bottom:5px;}
+.gen-text{font-size:13px;line-height:1.65;color:#E8E0D0;}
+.gen-hook{font-size:14px;font-weight:500;color:white;line-height:1.5;font-style:italic;}
+.gen-caption{font-size:13px;line-height:1.7;color:rgba(232,224,208,0.85);}
+.gen-hashtags{font-size:12px;color:var(--blue2);line-height:1.6;font-family:'DM Mono',monospace;}
+.gen-respa{font-size:10px;color:rgba(232,224,208,0.3);line-height:1.6;border-top:1px solid rgba(255,255,255,0.05);padding-top:10px;margin-top:10px;}
+.card-actions{display:flex;gap:8px;padding:0 16px 16px;}
+.btn-copy{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(232,224,208,0.7);padding:6px 12px;border-radius:2px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:0.04em;transition:all 0.2s;}
+.btn-copy:hover{border-color:var(--gold);color:var(--gold);}
+.btn-copy.copied{border-color:var(--green);color:#5BB880;}
+.btn-canva{background:rgba(0,177,107,0.1);border:1px solid rgba(0,177,107,0.25);color:#5BB880;padding:6px 12px;border-radius:2px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:0.04em;transition:all 0.2s;}
+.btn-canva:hover{background:rgba(0,177,107,0.15);}
+/* CALENDAR TEMPLATE ROW */
+.cal-slots{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;}
+.cal-slot{display:flex;align-items:center;gap:12px;padding:8px 12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:3px;cursor:pointer;transition:all 0.2s;}
+.cal-slot:hover{background:rgba(255,255,255,0.05);border-color:rgba(181,121,58,0.3);}
+.cal-slot.active{background:rgba(181,121,58,0.1);border-color:rgba(181,121,58,0.4);}
+.slot-week{font-size:10px;color:var(--gold);width:50px;flex-shrink:0;letter-spacing:0.06em;}
+.slot-topic{font-size:13px;flex:1;}
+.slot-role{font-size:10px;color:rgba(232,224,208,0.35);width:70px;text-align:right;}
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:80px 40px;color:rgba(232,224,208,0.2);}
+.empty-state h3{font-family:'Cormorant Garamond',serif;font-size:28px;margin-bottom:8px;color:rgba(232,224,208,0.4);}
+.empty-state p{font-size:13px;line-height:1.7;}
+</style>
 </head>
 <body>
-
-<nav class="cv-nav">
-  <a href="/" class="cv-nav-logo">Content<span>Vault</span></a>
-  <div class="cv-nav-links">
-    <a href="/admin.html" class="cv-nav-link">Admin</a>
-    <span style="font-size:0.72rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; background:var(--gold-dim); color:#92740A; padding:0.3rem 0.7rem; border-radius:2px; border:1px solid var(--gold-border);">AI Generator</span>
+<header>
+  <div>
+    <div class="logo">Content<span>Vault</span></div>
+    <div class="header-sub">AI Content Generator</div>
   </div>
-</nav>
+  <div style="font-size:12px;color:rgba(232,224,208,0.3);font-family:'DM Mono',monospace;" id="hdr-status">Ready</div>
+</header>
 
-<div class="main" style="padding-top:2.5rem;">
-  <div class="cv-section-tag">Powered by Claude</div>
-  <h1 style="font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:600; color:var(--navy); margin-bottom:0.5rem; line-height:1.1;">AI Content Generator</h1>
-  <p class="cv-body" style="margin-bottom:2rem;">Generate done-for-you social content, email templates, and video scripts for your monthly ContentVault drop. Select your parameters and get 3 ready-to-use variations instantly.</p>
-
-  <div class="generator-grid">
-    <!-- CONTROLS -->
-    <div class="controls">
-      <div style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; color:var(--navy); margin-bottom:1.2rem; padding-bottom:0.8rem; border-bottom:1px solid var(--gray-border);">Generation Settings</div>
-
-      <label class="cv-label">Audience</label>
-      <select class="cv-select" id="audience">
-        <option value="agent">Real Estate Agent</option>
-        <option value="lo">Loan Officer</option>
-        <option value="partnership">Agent + LO Partnership</option>
+<div class="main">
+  <div class="sidebar">
+    <div class="field-group">
+      <div class="field-label">Month</div>
+      <select id="sel-month">
+        <option value="May 2026">May 2026</option>
+        <option value="June 2026">June 2026</option>
+        <option value="July 2026">July 2026</option>
+        <option value="August 2026">August 2026</option>
       </select>
-
-      <label class="cv-label">Content Type</label>
-      <select class="cv-select" id="contentType">
-        <option value="social_caption">Social Media Caption</option>
-        <option value="video_script">Reels/TikTok Video Script</option>
-        <option value="email_newsletter">Email Newsletter</option>
-        <option value="story_sequence">Instagram Story Sequence</option>
-        <option value="market_update">Market Update Post</option>
-        <option value="objection_handler">Objection Handling Script</option>
-        <option value="co_branded">Co-Branded Partnership Post</option>
-      </select>
-
-      <label class="cv-label">Topic / Focus</label>
-      <select class="cv-select" id="topic">
-        <option value="buyer_education">Buyer Education</option>
-        <option value="seller_tips">Seller Tips</option>
-        <option value="market_conditions">Market Conditions</option>
-        <option value="mortgage_rates">Mortgage Rates</option>
-        <option value="first_time_buyers">First-Time Buyers</option>
-        <option value="investment_properties">Investment Properties</option>
-        <option value="refinancing">Refinancing</option>
-        <option value="credit_score">Credit Score Tips</option>
-        <option value="home_equity">Home Equity</option>
-        <option value="commission_value">Agent Value / Commission Defense</option>
-      </select>
-
-      <label class="cv-label">Market</label>
-      <select class="cv-select" id="market">
-        <option value="us">United States</option>
-        <option value="canada">Canada</option>
-      </select>
-
-      <label class="cv-label">City / Market (optional)</label>
-      <input type="text" class="cv-input" id="city" placeholder="e.g. Miami, Toronto, Dallas"/>
-
-      <label class="cv-label">Tone</label>
-      <select class="cv-select" id="tone">
-        <option value="educational">Educational & Authoritative</option>
-        <option value="conversational">Conversational & Warm</option>
-        <option value="urgent">Urgent & Action-Oriented</option>
-        <option value="data_driven">Data-Driven & Analytical</option>
-      </select>
-
-      <button class="btn-navy" id="generateBtn" onclick="generate()" style="width:100%;">Generate 3 Variations →</button>
-      <p style="font-size:0.65rem; color:var(--gray-light); text-align:center; margin-top:0.6rem;">Each generation uses Claude AI</p>
     </div>
+    <div class="field-group">
+      <div class="field-label">Market Focus</div>
+      <input type="text" id="inp-market" placeholder="Miami, FL" value="Miami, FL"/>
+    </div>
+    <div class="field-group">
+      <div class="field-label">Market Condition</div>
+      <select id="sel-condition">
+        <option value="competitive seller's market with low inventory">Seller's Market — Low Inventory</option>
+        <option value="balanced market with moderate activity">Balanced Market</option>
+        <option value="buyer's market with increasing inventory">Buyer's Market — Rising Inventory</option>
+        <option value="shifting market with rate volatility">Rate Volatility — Shifting Market</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <div class="field-label">Content Tone</div>
+      <select id="sel-tone">
+        <option value="authoritative and data-driven">Authoritative / Data-Driven</option>
+        <option value="warm and conversational">Warm / Conversational</option>
+        <option value="educational and clear">Educational / Clear</option>
+        <option value="bold and direct">Bold / Direct</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <div class="field-label">Generate Single Post</div>
+      <select id="sel-post">
+        <option value="">— Select a post —</option>
+      </select>
+    </div>
+    <button class="generate-btn" id="btn-single" onclick="generateSingle()" disabled>Generate Selected Post</button>
+    <hr class="sidebar-divider"/>
+    <button class="generate-all-btn" id="btn-all" onclick="generateAll()">Generate Full Month (12 Posts)</button>
+    <div class="progress-bar" id="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="status-text" id="status-text"></div>
+  </div>
 
-    <!-- OUTPUT -->
-    <div class="output-area" id="outputArea">
+  <div class="content">
+    <div class="content-header">
+      <div class="content-title" id="content-title">May 2026 Content Pack</div>
+      <div class="month-badge" id="month-badge">12 POSTS</div>
+    </div>
+    <div class="posts-grid" id="posts-grid">
       <div class="empty-state">
-        <div style="font-size:2.5rem; margin-bottom:1rem; opacity:0.3;">✦</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; color:var(--navy); margin-bottom:0.5rem;">Configure and generate.</div>
-        <div class="cv-body" style="font-size:0.8rem;">Each generation produces 3 distinct variations of your selected content type, ready to copy and use.</div>
+        <h3>No content generated yet</h3>
+        <p>Select a post from the sidebar and click Generate,<br/>or run the full month in one click.</p>
       </div>
     </div>
   </div>
 </div>
 
-<div class="cv-toast" id="toast"></div>
-
 <script>
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14eWVwdWNpdGp6bGVhemlpemtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0Njk1ODIsImV4cCI6MjA5MDA0NTU4Mn0.oQr_hO5fVkOhGcJ2u3mqQDJIfw9cAdXwfVAAXOf96q4';
+const POSTS = [
+  {id:1,week:"Wk1",day:"Mon",topic:"Spring Market Snapshot",type:"Educational",role:"agent",platform:"Instagram",hook_context:"inventory and buyer demand"},
+  {id:2,week:"Wk1",day:"Wed",topic:"Rate Reality Check",type:"Educational",role:"lo",platform:"Instagram",hook_context:"current mortgage rates and monthly payment impact"},
+  {id:3,week:"Wk1",day:"Fri",topic:"Agent + LO Alignment",type:"Co-branded",role:"partnership",platform:"Instagram",hook_context:"why buyers need agent and LO aligned before making offers"},
+  {id:4,week:"Wk2",day:"Mon",topic:"5 Things Sellers Wish They Knew",type:"Social Proof",role:"agent",platform:"Instagram",hook_context:"seller mistakes and surprises during listing"},
+  {id:5,week:"Wk2",day:"Wed",topic:"Pre-approval vs Pre-qualification",type:"Client Education",role:"lo",platform:"Instagram",hook_context:"the difference and why it matters in a competitive market"},
+  {id:6,week:"Wk2",day:"Fri",topic:"Behind the Deal: Contract to Close",type:"Story",role:"partnership",platform:"Instagram",hook_context:"everyone working on a transaction between contract and close"},
+  {id:7,week:"Wk3",day:"Mon",topic:"What the NAR Settlement Changed",type:"Educational",role:"agent",platform:"Instagram",hook_context:"buyer agent compensation changes post-NAR settlement"},
+  {id:8,week:"Wk3",day:"Wed",topic:"True Cost of Waiting for Rates",type:"Educational",role:"lo",platform:"Instagram",hook_context:"financial math of waiting 12 months vs buying now"},
+  {id:9,week:"Wk3",day:"Fri",topic:"Monthly Market Update Email",type:"Email",role:"all",platform:"Email",hook_context:"market stats, days on market, median price, what it means for clients"},
+  {id:10,week:"Wk4",day:"Mon",topic:"Why I Got Into Real Estate",type:"Personal Brand",role:"agent",platform:"Instagram",hook_context:"authentic personal story connecting values to profession"},
+  {id:11,week:"Wk4",day:"Wed",topic:"What Your Credit Score Needs to Be",type:"Educational",role:"lo",platform:"Instagram",hook_context:"credit score requirements by loan type and how to improve"},
+  {id:12,week:"Wk4",day:"Fri",topic:"Referral Trigger Post",type:"Referral",role:"partnership",platform:"Instagram",hook_context:"invitation for followers to tag someone thinking about buying or selling"}
+];
 
-  function showToast(msg) {
-    var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
-    setTimeout(function() { t.classList.remove('show'); }, 3000);
-  }
+const generated = {};
 
-  function copyText(text, btn) {
-    navigator.clipboard.writeText(text).then(function() {
-      var orig = btn.textContent; btn.textContent = '✓ Copied';
-      showToast('Copied to clipboard');
-      setTimeout(function() { btn.textContent = orig; }, 2000);
+// Populate sidebar dropdown
+const sel = document.getElementById('sel-post');
+POSTS.forEach(p=>{
+  const opt = document.createElement('option');
+  opt.value = p.id;
+  opt.textContent = p.week+' '+p.day+' — '+p.topic;
+  sel.appendChild(opt);
+});
+sel.addEventListener('change',()=>{
+  document.getElementById('btn-single').disabled = !sel.value;
+});
+
+// Render all post card slots
+function renderSlots(){
+  const grid = document.getElementById('posts-grid');
+  grid.innerHTML = '';
+  POSTS.forEach(p=>{
+    const card = document.createElement('div');
+    card.className = 'post-card';
+    card.id = 'card-'+p.id;
+    const roleColor = p.role==='agent'?'rgba(181,121,58,0.7)':p.role==='lo'?'rgba(108,159,212,0.7)':'rgba(91,184,128,0.7)';
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="card-week">${p.week} ${p.day}</span>
+        <span class="card-platform">${p.platform}</span>
+      </div>
+      <div class="card-topic">${p.topic}</div>
+      <div class="card-role" style="color:${roleColor}">${p.type} · ${p.role==='all'?'All roles':p.role.toUpperCase()}</div>
+      <div class="card-body empty" id="body-${p.id}">Click generate to create content for this post</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+renderSlots();
+
+function buildPrompt(post, month, market, condition, tone){
+  const isLO = post.role==='lo'||post.role==='partnership';
+  const isEmail = post.platform==='Email';
+  return `You are a professional content writer for ContentVault, a content membership for real estate agents and loan officers.
+
+Generate content for this post:
+- Month: ${month}
+- Topic: ${post.topic}
+- Type: ${post.type}
+- Role: ${post.role}
+- Platform: ${post.platform}
+- Market: ${market}
+- Market condition: ${condition}
+- Tone: ${tone}
+- Context: ${post.hook_context}
+
+Return ONLY a JSON object with these exact keys, no markdown, no preamble:
+{
+  "hook": "The opening line (1-2 sentences max, scroll-stopping, no emoji at start)",
+  "caption": "${isEmail?'Full email body (150-200 words, professional, with [MARKET] and [STATS] placeholders for personalization)':'Full Instagram caption (100-150 words, conversational, ends with a soft CTA)'}",
+  "hashtags": "${isEmail?'[]':'Array of 8-10 hashtags as strings, mix of broad and niche, no # symbol'}",
+  "cta": "One clear call to action sentence",
+  ${isLO?`"respa_block": "NMLS #[YOUR NMLS] | Licensed in [STATE] | Equal Housing Lender | This is not a commitment to lend. Per RESPA §8: No referral fee or thing of value has been exchanged for any referral of settlement service business.",`:''}
+  "canva_prompt": "A 15-word visual direction for the Canva template background and style"
+}`;
+}
+
+async function generatePost(post){
+  const card = document.getElementById('card-'+post.id);
+  const body = document.getElementById('body-'+post.id);
+  card.className = 'post-card generating';
+  body.className = 'card-body loading';
+  body.textContent = '⟳ Generating with AI...';
+
+  const month = document.getElementById('sel-month').value;
+  const market = document.getElementById('inp-market').value||'Your Market';
+  const condition = document.getElementById('sel-condition').value;
+  const tone = document.getElementById('sel-tone').value;
+
+  try{
+    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:buildPrompt(post,month,market,condition,tone)}]
+      })
     });
+    const data = await resp.json();
+    const raw = data.content?.[0]?.text||'';
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const result = JSON.parse(clean);
+    generated[post.id] = result;
+    renderPostContent(post, result);
+    card.className = 'post-card done';
+  } catch(e){
+    body.className = 'card-body empty';
+    body.textContent = 'Error: '+String(e);
+    card.className = 'post-card';
   }
+}
 
-  async function generate() {
-    var btn = document.getElementById('generateBtn');
-    var audience = document.getElementById('audience').value;
-    var contentType = document.getElementById('contentType').value;
-    var topic = document.getElementById('topic').value;
-    var market = document.getElementById('market').value;
-    var city = document.getElementById('city').value.trim();
-    var tone = document.getElementById('tone').value;
+function renderPostContent(post, result){
+  const body = document.getElementById('body-'+post.id);
+  const isEmail = post.platform==='Email';
+  body.className = 'card-body';
+  body.innerHTML = `
+    <div class="gen-section">
+      <div class="gen-label">Hook</div>
+      <div class="gen-hook">${result.hook||''}</div>
+    </div>
+    <div class="gen-section">
+      <div class="gen-label">${isEmail?'Email Body':'Caption'}</div>
+      <div class="gen-caption">${(result.caption||'').replace(/\n/g,'<br/>')}</div>
+    </div>
+    ${!isEmail&&result.hashtags?.length?`<div class="gen-section"><div class="gen-label">Hashtags</div><div class="gen-hashtags">#${result.hashtags.join(' #')}</div></div>`:''}
+    ${result.cta?`<div class="gen-section"><div class="gen-label">CTA</div><div class="gen-text">${result.cta}</div></div>`:''}
+    ${result.respa_block?`<div class="gen-respa">${result.respa_block}</div>`:''}
+    ${result.canva_prompt?`<div class="gen-section" style="margin-top:8px"><div class="gen-label">Canva Visual Direction</div><div class="gen-text" style="font-size:12px;color:rgba(232,224,208,0.5)">${result.canva_prompt}</div></div>`:''}
+    <div class="card-actions" style="padding:12px 0 0">
+      <button class="btn-copy" onclick="copyPost(${post.id})">Copy Full Post</button>
+      <button class="btn-copy" onclick="copyCaption(${post.id})">Copy Caption Only</button>
+    </div>
+  `;
+}
 
-    btn.disabled = true; btn.textContent = 'Generating...';
-    var outputArea = document.getElementById('outputArea');
-    outputArea.innerHTML = '<div class="loading-card"><div class="spinner"></div><div style="font-size:0.8rem; color:var(--gray);">Claude is writing your content...</div></div>';
+function copyPost(id){
+  const p = POSTS.find(x=>x.id===id);
+  const r = generated[id];
+  if(!r)return;
+  const isEmail = p.platform==='Email';
+  let text = r.hook+'\n\n'+r.caption;
+  if(!isEmail&&r.hashtags?.length)text+='\n\n#'+r.hashtags.join(' #');
+  if(r.cta)text+='\n\n'+r.cta;
+  if(r.respa_block)text+='\n\n'+r.respa_block;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = document.querySelector(`#body-${id} .btn-copy`);
+    if(btn){btn.textContent='✓ Copied';btn.className='btn-copy copied';setTimeout(()=>{btn.textContent='Copy Full Post';btn.className='btn-copy';},2500);}
+  }).catch(()=>alert(text));
+}
 
-    var TYPE_LABELS = {social_caption:'Social Media Caption',video_script:'Reels/TikTok Video Script',email_newsletter:'Email Newsletter',story_sequence:'Instagram Story Sequence',market_update:'Market Update Post',objection_handler:'Objection Handling Script',co_branded:'Co-Branded Partnership Post'};
+function copyCaption(id){
+  const r = generated[id];
+  if(!r)return;
+  navigator.clipboard.writeText(r.caption||'').then(()=>{
+    const btns = document.querySelectorAll(`#body-${id} .btn-copy`);
+    if(btns[1]){btns[1].textContent='✓ Copied';btns[1].className='btn-copy copied';setTimeout(()=>{btns[1].textContent='Copy Caption Only';btns[1].className='btn-copy';},2500);}
+  });
+}
 
-    try {
-      var response = await fetch('https://mxyepucitjzleaziizkr.supabase.co/functions/v1/cv-generate-v2', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
-        body: JSON.stringify({ audience, contentType, topic, market, city, tone })
-      });
+async function generateSingle(){
+  const id = parseInt(document.getElementById('sel-post').value);
+  if(!id)return;
+  const post = POSTS.find(p=>p.id===id);
+  document.getElementById('btn-single').disabled=true;
+  document.getElementById('btn-all').disabled=true;
+  await generatePost(post);
+  document.getElementById('btn-single').disabled=false;
+  document.getElementById('btn-all').disabled=false;
+}
 
-      var data = await response.json();
-      var text = data.text || '';
-      if (!text) throw new Error(data.error || 'No content returned');
-
-      var variations = text.split(/VARIATION \d+/i).filter(function(v) { return v.trim().length > 50; });
-      if (!variations.length) variations = [text];
-
-      outputArea.innerHTML = '';
-      var typeLabel = TYPE_LABELS[contentType] || contentType;
-
-      variations.forEach(function(variation, i) {
-        var content = variation.trim().replace(/^[\n:—\-]+/, '').trim();
-        var card = document.createElement('div');
-        card.className = 'output-card';
-        card.innerHTML =
-          '<div class="output-header">' +
-            '<span class="output-type">' + typeLabel + ' — Variation ' + (i+1) + '</span>' +
-            '<button class="output-copy-btn" onclick="copyText(this.closest(\'.output-card\').querySelector(\'.output-content\').textContent, this)">Copy</button>' +
-          '</div>' +
-          '<div class="output-content">' + escapeHtml(content) + '</div>';
-        outputArea.appendChild(card);
-      });
-
-    } catch(e) {
-      outputArea.innerHTML = '<div class="empty-state"><div style="font-size:2rem;margin-bottom:0.8rem;color:var(--gray-light);">⚠</div><div style="font-family:\'Cormorant Garamond\',serif;font-size:1rem;color:var(--navy);margin-bottom:0.4rem;">Generation failed.</div><div class="cv-body" style="font-size:0.8rem;">'+escapeHtml(e.message)+'</div></div>';
-    }
-
-    btn.disabled = false; btn.textContent = 'Generate 3 Variations →';
+async function generateAll(){
+  document.getElementById('btn-all').disabled=true;
+  document.getElementById('btn-single').disabled=true;
+  const bar = document.getElementById('progress-bar');
+  const fill = document.getElementById('progress-fill');
+  const status = document.getElementById('status-text');
+  bar.style.display='block';
+  for(let i=0;i<POSTS.length;i++){
+    const p = POSTS[i];
+    status.textContent = 'Generating '+p.week+' '+p.day+': '+p.topic+'...';
+    document.getElementById('hdr-status').textContent = (i+1)+'/'+POSTS.length+' posts';
+    await generatePost(p);
+    fill.style.width = ((i+1)/POSTS.length*100)+'%';
+    await new Promise(r=>setTimeout(r,400));
   }
-
-  function escapeHtml(text) {
-    return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br/>');
-  }
+  status.textContent = '✓ All 12 posts generated';
+  document.getElementById('hdr-status').textContent = '12/12 complete';
+  document.getElementById('btn-all').disabled=false;
+  document.getElementById('btn-single').disabled=false;
+}
 </script>
 </body>
 </html>
