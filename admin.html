@@ -1,228 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ContentVault — Admin</title>
-  <link rel="stylesheet" href="styles.css"/>
-  <style>
-    body { background: var(--off-white); }
-    .main { padding: 2rem; max-width: 1280px; margin: 0 auto; }
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
-    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-    .section-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 600; color: var(--navy); }
-    .refresh-btn { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--navy); background: var(--white); border: 1px solid var(--gray-border); padding: 0.4rem 0.9rem; border-radius: 2px; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; transition: all 0.2s; }
-    .refresh-btn:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
-    .action-btn { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em; padding: 0.3rem 0.7rem; border-radius: 2px; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; text-transform: uppercase; border: none; transition: opacity 0.2s; text-decoration: none; display: inline-block; }
-    .btn-copy { background: var(--gold-dim); color: #92740A; border: 1px solid var(--gold-border); }
-    .btn-email { background: rgba(10,22,40,0.06); color: var(--navy); border: 1px solid rgba(10,22,40,0.15); }
-    .payment-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
-    .payment-card { background: var(--white); border: 1px solid var(--gray-border); border-radius: 4px; padding: 1.4rem; box-shadow: var(--shadow-sm); }
-    .payment-card.featured { border-color: var(--gold); border-width: 2px; }
-    .copy-link-btn { width: 100%; padding: 0.55rem; background: var(--white); border: 1px solid var(--gray-border); border-radius: 2px; color: var(--gray); font-family: 'IBM Plex Sans', sans-serif; font-size: 0.68rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
-    .copy-link-btn:hover { border-color: var(--navy); color: var(--navy); }
-    .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--off-white); }
-    .login-card { background: var(--white); border: 1px solid var(--gray-border); border-radius: 4px; padding: 2.5rem; width: 100%; max-width: 360px; box-shadow: var(--shadow-md); }
-    .login-error { font-size: 0.75rem; color: #DC2626; margin-top: 0.6rem; text-align: center; }
-    .empty { text-align: center; padding: 3rem; color: var(--gray-light); font-size: 0.83rem; }
-    .loading { text-align: center; padding: 2rem; color: var(--gray-light); font-size: 0.78rem; }
-    @media (max-width: 900px) { .stats-grid { grid-template-columns: 1fr 1fr; } .payment-links { grid-template-columns: 1fr; } }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ContentVault Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--ink:#0F0B07;--cream:#F7F2E8;--parchment:#EDE5D4;--gold:#B5793A;--blue:#1C3F6E;--blue2:#2C5F8A;--muted:#7A6E61;--border:#D4C9B0;--green:#2A7A4B;--red:#8B2020;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0F0B07;color:#E8E0D0;font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;}
+header{border-bottom:1px solid rgba(255,255,255,0.08);padding:20px 32px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-size:16px;font-weight:500;letter-spacing:0.08em;color:#E8E0D0;}.logo span{color:var(--gold);}
+.header-meta{font-size:12px;color:rgba(232,224,208,0.4);font-family:'DM Mono',monospace;}
+.tabs{display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,0.08);padding:0 32px;}
+.tab{padding:14px 24px;font-size:13px;cursor:pointer;color:rgba(232,224,208,0.4);border-bottom:2px solid transparent;transition:all 0.2s;letter-spacing:0.04em;}
+.tab.active{color:#E8E0D0;border-bottom-color:var(--gold);}
+.tab:hover{color:rgba(232,224,208,0.7);}
+main{padding:32px;}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+.stat{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:20px 24px;}
+.stat-val{font-size:32px;font-weight:500;color:#E8E0D0;font-family:'DM Mono',monospace;margin-bottom:4px;}
+.stat-label{font-size:11px;color:rgba(232,224,208,0.4);letter-spacing:0.08em;text-transform:uppercase;}
+.stat-val.gold{color:var(--gold);}
+.panel{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;margin-bottom:24px;}
+.panel-header{padding:16px 24px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(232,224,208,0.5);}
+.panel-count{font-size:12px;color:var(--gold);font-family:'DM Mono',monospace;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(232,224,208,0.3);padding:10px 16px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.05);}
+td{padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(232,224,208,0.8);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,0.02);}
+.badge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:2px;letter-spacing:0.04em;}
+.badge-agent{background:rgba(181,121,58,0.2);color:var(--gold);border:1px solid rgba(181,121,58,0.3);}
+.badge-lo{background:rgba(28,63,110,0.3);color:#6B9FD4;border:1px solid rgba(28,63,110,0.4);}
+.badge-partnership{background:rgba(42,122,75,0.2);color:#5BB880;border:1px solid rgba(42,122,75,0.3);}
+.badge-lead{background:rgba(255,255,255,0.06);color:rgba(232,224,208,0.5);border:1px solid rgba(255,255,255,0.1);}
+.mono{font-family:'DM Mono',monospace;font-size:12px;}
+.empty{text-align:center;padding:48px;color:rgba(232,224,208,0.3);font-size:13px;}
+.loader{text-align:center;padding:48px;color:rgba(232,224,208,0.3);}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;}
+.dot-green{background:var(--green);}
+.dot-gold{background:var(--gold);}
+.refresh-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(232,224,208,0.6);padding:6px 14px;border-radius:2px;font-size:11px;cursor:pointer;letter-spacing:0.06em;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.refresh-btn:hover{border-color:var(--gold);color:var(--gold);}
+.tab-content{display:none;}.tab-content.active{display:block;}
+.cal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.cal-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:16px;}
+.cal-week{font-size:10px;color:var(--gold);letter-spacing:0.1em;margin-bottom:4px;}
+.cal-day{font-size:16px;font-weight:500;margin-bottom:10px;}
+.cal-topic{font-size:13px;margin-bottom:6px;}
+.cal-meta{font-size:11px;color:rgba(232,224,208,0.35);}
+.cal-platform{display:inline-block;font-size:10px;border:1px solid rgba(255,255,255,0.1);padding:2px 8px;border-radius:2px;margin-top:8px;color:rgba(232,224,208,0.4);}
+.webhook-row{display:flex;align-items:center;gap:12px;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.webhook-url{font-family:'DM Mono',monospace;font-size:12px;color:rgba(232,224,208,0.5);flex:1;word-break:break-all;}
+.webhook-event{font-size:11px;color:var(--gold);background:rgba(181,121,58,0.15);padding:3px 8px;border-radius:2px;white-space:nowrap;}
+.wh-status{font-size:11px;padding:3px 8px;border-radius:2px;}
+.wh-active{background:rgba(42,122,75,0.2);color:#5BB880;border:1px solid rgba(42,122,75,0.3);}
+.wh-inactive{background:rgba(255,255,255,0.06);color:rgba(232,224,208,0.4);border:1px solid rgba(255,255,255,0.1);}
+.note{font-size:12px;color:rgba(232,224,208,0.35);padding:16px 24px;border-top:1px solid rgba(255,255,255,0.05);}
+</style>
 </head>
 <body>
-
-<!-- LOGIN -->
-<div class="login-wrap" id="loginWrap">
-  <div class="login-card">
-    <div style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:600; color:var(--navy); margin-bottom:0.2rem;">Content<span style="color:var(--gold);">Vault</span></div>
-    <div style="font-size:0.62rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:var(--gray); margin-bottom:2rem;">Admin Dashboard</div>
-    <label class="cv-label">Password</label>
-    <input type="password" class="cv-input" id="loginInput" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')login()"/>
-    <button class="btn-navy" onclick="login()" style="width:100%;">Access Dashboard →</button>
-    <div class="login-error" id="loginError"></div>
-  </div>
+<header>
+  <div class="logo">Content<span>Vault</span> <span style="font-size:11px;color:rgba(232,224,208,0.3);margin-left:8px;">Admin</span></div>
+  <div class="header-meta" id="last-updated">Loading...</div>
+</header>
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('signups')">Signups</div>
+  <div class="tab" onclick="switchTab('directory')">Partner Directory</div>
+  <div class="tab" onclick="switchTab('calendar')">Content Calendar</div>
+  <div class="tab" onclick="switchTab('webhooks')">Integrations</div>
 </div>
+<main>
 
-<!-- DASHBOARD -->
-<div id="dashboard" style="display:none;">
-  <nav class="cv-nav">
-    <a href="/" class="cv-nav-logo">Content<span>Vault</span></a>
-    <div class="cv-nav-links">
-      <span style="font-size:0.72rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; background:var(--gold-dim); color:#92740A; padding:0.3rem 0.7rem; border-radius:2px; border:1px solid var(--gold-border);">Admin</span>
-      <a href="/generate.html" class="cv-nav-link">Content Generator</a>
-      <button class="cv-nav-cta" onclick="logout()">Logout</button>
+  <!-- SIGNUPS TAB -->
+  <div class="tab-content active" id="tab-signups">
+    <div class="stat-row" id="stat-row">
+      <div class="stat"><div class="stat-val gold" id="st-total">—</div><div class="stat-label">Total Signups</div></div>
+      <div class="stat"><div class="stat-val" id="st-agents">—</div><div class="stat-label">Agents</div></div>
+      <div class="stat"><div class="stat-val" id="st-lo">—</div><div class="stat-label">Loan Officers</div></div>
+      <div class="stat"><div class="stat-val" id="st-partner">—</div><div class="stat-label">Partnership Plan</div></div>
     </div>
-  </nav>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">All Signups</div>
+        <button class="refresh-btn" onclick="loadSignups()">↻ Refresh</button>
+      </div>
+      <div id="signups-table"><div class="loader">Loading signups...</div></div>
+    </div>
+  </div>
 
-  <div class="main">
-    <!-- STATS -->
-    <div class="stats-grid" style="margin-top:1.5rem;">
-      <div class="cv-card">
-        <div class="cv-stat-label">Total Signups</div>
-        <div class="cv-stat-value" id="statTotal">—</div>
-        <div style="font-size:0.72rem; color:var(--gray); margin-top:0.3rem;">All time</div>
+  <!-- DIRECTORY TAB -->
+  <div class="tab-content" id="tab-directory">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Partner Directory</div>
+        <button class="refresh-btn" onclick="loadDirectory()">↻ Refresh</button>
       </div>
-      <div class="cv-card">
-        <div class="cv-stat-label">Lead Magnets</div>
-        <div class="cv-stat-value" id="statLeads">—</div>
-        <div style="font-size:0.72rem; color:var(--gray); margin-top:0.3rem;">Free template requests</div>
-      </div>
-      <div class="cv-card">
-        <div class="cv-stat-label">Founding Members</div>
-        <div class="cv-stat-value" id="statFounders">—</div>
-        <div style="font-size:0.72rem; color:var(--gray); margin-top:0.3rem;">Spots reserved</div>
-      </div>
-      <div class="cv-card" style="background:var(--navy); border-color:var(--navy);">
-        <div class="cv-stat-label" style="color:rgba(255,255,255,0.5);">Est. MRR</div>
-        <div class="cv-stat-value gold" id="statMRR">—</div>
-        <div style="font-size:0.72rem; color:rgba(255,255,255,0.4); margin-top:0.3rem;">If all founders convert</div>
-      </div>
+      <div id="directory-table"><div class="loader">Loading directory...</div></div>
     </div>
+  </div>
 
-    <!-- PAYMENT LINKS -->
-    <div class="section-header">
-      <div class="section-title">Payment Links</div>
+  <!-- CALENDAR TAB -->
+  <div class="tab-content" id="tab-calendar">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">May 2026 — Content Calendar</div>
+        <span class="panel-count" id="cal-count">12 posts</span>
+      </div>
+      <div style="padding:24px;" id="cal-grid-wrap"><div class="loader">Loading calendar...</div></div>
     </div>
-    <div class="payment-links">
-      <div class="payment-card">
-        <div style="font-size:0.6rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:0.4rem;">For Realtors</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:600; color:var(--navy); margin-bottom:0.2rem;">Agent Plan</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--navy); margin-bottom:0.8rem;">$49<span style="font-size:1rem; font-weight:300;">/mo</span></div>
-        <button class="copy-link-btn" onclick="copyLink('https://buy.stripe.com/bJe5kE7Aagisc4VemU3VC01', this)">Copy Payment Link</button>
-      </div>
-      <div class="payment-card featured">
-        <div style="font-size:0.6rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:0.4rem;">Agent + LO Pair</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:600; color:var(--navy); margin-bottom:0.2rem;">Partnership Plan</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--navy); margin-bottom:0.8rem;">$69<span style="font-size:1rem; font-weight:300;">/mo</span></div>
-        <button class="copy-link-btn" onclick="copyLink('https://buy.stripe.com/4gM9AU3jU7LW3yp0w43VC03', this)">Copy Payment Link</button>
-      </div>
-      <div class="payment-card">
-        <div style="font-size:0.6rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:0.4rem;">For Loan Officers</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:600; color:var(--navy); margin-bottom:0.2rem;">LO Plan</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--navy); margin-bottom:0.8rem;">$49<span style="font-size:1rem; font-weight:300;">/mo</span></div>
-        <button class="copy-link-btn" onclick="copyLink('https://buy.stripe.com/6oU8wQ1bMfeoc4VfqY3VC02', this)">Copy Payment Link</button>
-      </div>
-    </div>
+  </div>
 
-    <!-- SIGNUPS TABLE -->
-    <div class="section-header">
-      <div class="section-title">All Signups</div>
-      <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
+  <!-- WEBHOOKS TAB -->
+  <div class="tab-content" id="tab-webhooks">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Zapier / Make Webhooks</div>
+        <span class="panel-count" id="wh-count">—</span>
+      </div>
+      <div id="webhooks-list"><div class="loader">Loading webhooks...</div></div>
+      <div class="note">To activate a webhook: copy the Zapier catch URL from your Zap, update the row in Supabase <code>cv_webhooks</code> table, and set <code>active = true</code>. The edge function <code>cv-mailer-v5</code> fires all active hooks on every signup and partner registration event.</div>
     </div>
-    <div class="cv-table-wrap" style="margin-bottom:2rem;">
-      <div class="loading" id="loadingMsg">Loading signups...</div>
-      <table class="cv-table" id="signupsTable" style="display:none;">
-        <thead>
-          <tr>
-            <th>Name</th><th>Email</th><th>Type</th><th>Plan</th><th>Market</th><th>Signed Up</th><th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="signupsBody"></tbody>
-      </table>
-      <div class="empty" id="emptyMsg" style="display:none;">No signups yet. Share the link and they'll appear here.</div>
-    </div>
-
-    <!-- CANVA TEMPLATES -->
-    <div class="section-header">
-      <div class="section-title">Canva Template Links</div>
-    </div>
-    <div class="cv-table-wrap" style="margin-bottom:2rem;">
-      <table class="cv-table">
-        <thead><tr><th>Template</th><th>Audience</th><th>Action</th></tr></thead>
+    <div class="panel" style="margin-top:24px;">
+      <div class="panel-header"><div class="panel-title">Edge Functions</div></div>
+      <table>
+        <thead><tr><th>Function</th><th>Status</th><th>Endpoint</th><th>Purpose</th></tr></thead>
         <tbody>
-          <tr><td>5 Things to Know Before Buying a Home</td><td><span class="cv-badge cv-badge-gold">Agent</span></td><td><button class="copy-link-btn" style="width:auto;padding:0.3rem 0.7rem;" onclick="copyLink('https://www.canva.com/design/DAHFct5CmE8/copy',this)">Copy Link</button></td></tr>
-          <tr><td>Just Sold Announcement</td><td><span class="cv-badge cv-badge-gold">Agent</span></td><td><button class="copy-link-btn" style="width:auto;padding:0.3rem 0.7rem;" onclick="copyLink('https://www.canva.com/design/DAHFcj_wYvE/copy',this)">Copy Link</button></td></tr>
-          <tr><td>Monthly Market Update</td><td><span class="cv-badge cv-badge-gold">Agent</span></td><td><button class="copy-link-btn" style="width:auto;padding:0.3rem 0.7rem;" onclick="copyLink('https://www.canva.com/design/DAHFcv8TLKY/copy',this)">Copy Link</button></td></tr>
-          <tr><td>What Your Credit Score Means for Your Rate</td><td><span class="cv-badge cv-badge-navy">LO</span></td><td><button class="copy-link-btn" style="width:auto;padding:0.3rem 0.7rem;" onclick="copyLink('https://www.canva.com/design/DAHFco_QHG8/copy',this)">Copy Link</button></td></tr>
-          <tr><td>How Much Home Can You Actually Afford?</td><td><span class="cv-badge cv-badge-navy">LO</span></td><td><button class="copy-link-btn" style="width:auto;padding:0.3rem 0.7rem;" onclick="copyLink('https://www.canva.com/design/DAHFcixcM0Q/copy',this)">Copy Link</button></td></tr>
+          <tr><td class="mono">cv-mailer-v5</td><td><span class="dot dot-green"></span>Active</td><td class="mono" style="font-size:11px;">mxyepucitjzleaziizkr.supabase.co/functions/v1/cv-mailer-v5</td><td>Welcome emails, partner directory, webhooks, RESPA compliance</td></tr>
+          <tr><td class="mono">cv-mailer-v2</td><td><span class="dot" style="background:#555;"></span>Legacy</td><td class="mono" style="font-size:11px;">cv-mailer-v2</td><td>Previous version — do not use</td></tr>
         </tbody>
       </table>
     </div>
   </div>
-</div>
 
-<div class="cv-toast" id="toast"></div>
+</main>
 
 <script>
-  const SUPABASE_URL = 'https://mxyepucitjzleaziizkr.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14eWVwdWNpdGp6bGVhemlpemtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0Njk1ODIsImV4cCI6MjA5MDA0NTU4Mn0.oQr_hO5fVkOhGcJ2u3mqQDJIfw9cAdXwfVAAXOf96q4';
-  const ADMIN_PASS = 'CV2026admin!';
+const SB = 'https://mxyepucitjzleaziizkr.supabase.co/rest/v1';
+const SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14eWVwdWNpdGp6bGVhemlpemtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYwNjI5NjQsImV4cCI6MjA2MTYzODk2NH0.Av9t3Ew1mMCLdJC0dAr4MiKBz1YQPA79h7ZWEpCw_xE';
+const H = {apikey:SK,Authorization:'Bearer '+SK};
 
-  function showToast(msg) {
-    var t = document.getElementById('toast');
-    t.textContent = msg; t.classList.add('show');
-    setTimeout(function() { t.classList.remove('show'); }, 3000);
-  }
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.remove('active');});
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  const tabs = ['signups','directory','calendar','webhooks'];
+  document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='signups')loadSignups();
+  if(name==='directory')loadDirectory();
+  if(name==='calendar')loadCalendar();
+  if(name==='webhooks')loadWebhooks();
+}
 
-  function login() {
-    if (document.getElementById('loginInput').value === ADMIN_PASS) {
-      document.getElementById('loginWrap').style.display = 'none';
-      document.getElementById('dashboard').style.display = 'block';
-      localStorage.setItem('cv_admin', '1');
-      loadData();
-    } else { document.getElementById('loginError').textContent = 'Incorrect password.'; }
-  }
+function badge(role){
+  if(!role)return '<span class="badge badge-lead">lead</span>';
+  const map={agent:'badge-agent',lo:'badge-lo',partnership:'badge-partnership'};
+  return '<span class="badge '+(map[role]||'badge-lead')+'">'+role+'</span>';
+}
 
-  function logout() {
-    localStorage.removeItem('cv_admin');
-    document.getElementById('loginWrap').style.display = 'flex';
-    document.getElementById('dashboard').style.display = 'none';
-    document.getElementById('loginInput').value = '';
-  }
+function fmt(dt){if(!dt)return '—';const d=new Date(dt);return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});}
 
-  if (localStorage.getItem('cv_admin') === '1') {
-    document.getElementById('loginWrap').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    loadData();
-  }
+async function loadSignups(){
+  try{
+    const r=await fetch(SB+'/contentvault_signups?order=created_at.desc&limit=200',{headers:H});
+    const data=await r.json();
+    const counts={total:data.length,agent:0,lo:0,partnership:0};
+    data.forEach(d=>{if(d.role==='agent')counts.agent++;else if(d.role==='lo')counts.lo++;else if(d.role==='partnership')counts.partnership++;});
+    document.getElementById('st-total').textContent=counts.total;
+    document.getElementById('st-agents').textContent=counts.agent;
+    document.getElementById('st-lo').textContent=counts.lo;
+    document.getElementById('st-partner').textContent=counts.partnership;
+    if(!data.length){document.getElementById('signups-table').innerHTML='<div class="empty">No signups yet.</div>';return;}
+    let html='<table><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Role</th><th>Market</th><th>NMLS</th><th>Type</th></tr></thead><tbody>';
+    data.forEach(d=>{html+='<tr><td class="mono">'+fmt(d.created_at)+'</td><td>'+(d.name||'—')+'</td><td class="mono" style="font-size:12px">'+(d.email||'—')+'</td><td>'+badge(d.role)+'</td><td>'+(d.market||'—')+'</td><td class="mono">'+(d.nmls_number||'—')+'</td><td>'+(d.lead_magnet?'<span style="font-size:11px;color:rgba(232,224,208,0.4);">Free lead</span>':'<span style="font-size:11px;color:#5BB880;">Paid intent</span>')+'</td></tr>';});
+    html+='</tbody></table>';
+    document.getElementById('signups-table').innerHTML=html;
+    document.getElementById('last-updated').textContent='Last updated: '+new Date().toLocaleTimeString();
+  }catch(e){document.getElementById('signups-table').innerHTML='<div class="empty">Error loading signups: '+e.message+'</div>';}
+}
 
-  async function loadData() {
-    document.getElementById('loadingMsg').style.display = 'block';
-    document.getElementById('signupsTable').style.display = 'none';
-    document.getElementById('emptyMsg').style.display = 'none';
-    try {
-      var res = await fetch(SUPABASE_URL + '/rest/v1/contentvault_signups?order=created_at.desc', {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
-      });
-      var data = await res.json();
-      var total = data.length;
-      var leads = data.filter(function(r){return r.lead_magnet;}).length;
-      var founders = data.filter(function(r){return !r.lead_magnet;}).length;
-      var agents = data.filter(function(r){return r.role==='agent';}).length;
-      var los = data.filter(function(r){return r.role==='lo';}).length;
-      var partners = data.filter(function(r){return r.role==='partnership';}).length;
-      document.getElementById('statTotal').textContent = total;
-      document.getElementById('statLeads').textContent = leads;
-      document.getElementById('statFounders').textContent = founders;
-      document.getElementById('statMRR').textContent = '$' + ((agents*49)+(los*49)+(partners*69));
-      document.getElementById('loadingMsg').style.display = 'none';
-      if (!data.length) { document.getElementById('emptyMsg').style.display = 'block'; return; }
-      var tbody = document.getElementById('signupsBody');
-      tbody.innerHTML = '';
-      var PLANS = {agent:'Agent Plan',lo:'LO Plan',partnership:'Partnership Plan'};
-      var LINKS = {agent:'https://buy.stripe.com/bJe5kE7Aagisc4VemU3VC01',lo:'https://buy.stripe.com/6oU8wQ1bMfeoc4VfqY3VC02',partnership:'https://buy.stripe.com/4gM9AU3jU7LW3yp0w43VC03'};
-      data.forEach(function(row) {
-        var d = new Date(row.created_at);
-        var dStr = d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-        var roleBadge = row.role ? '<span class="cv-badge cv-badge-'+(row.role==='lo'?'navy':'gold')+'">'+(PLANS[row.role]||row.role)+'</span>' : '<span class="cv-badge cv-badge-navy">—</span>';
-        var typeBadge = row.lead_magnet ? '<span class="cv-badge cv-badge-navy">Lead</span>' : '<span class="cv-badge cv-badge-gold">Founding</span>';
-        var actions = '<a class="action-btn btn-email" href="mailto:'+row.email+'?subject=Your%20ContentVault%20membership" style="margin-right:4px;">Email</a>';
-        if (!row.lead_magnet && LINKS[row.role]) actions += '<button class="action-btn btn-copy" onclick="copyLink(\''+LINKS[row.role]+'\',this)">Copy Link</button>';
-        var tr = document.createElement('tr');
-        tr.innerHTML = '<td>'+(row.name||'—')+'</td><td><a href="mailto:'+row.email+'" style="color:var(--navy);text-decoration:none;">'+row.email+'</a></td><td>'+typeBadge+'</td><td>'+roleBadge+'</td><td>'+(row.market?row.market.toUpperCase():'—')+'</td><td>'+dStr+'</td><td>'+actions+'</td>';
-        tbody.appendChild(tr);
-      });
-      document.getElementById('signupsTable').style.display = 'table';
-    } catch(e) { document.getElementById('loadingMsg').textContent = 'Error loading data.'; }
-  }
+async function loadDirectory(){
+  try{
+    const r=await fetch(SB+'/partner_directory?order=created_at.desc&limit=200',{headers:H});
+    const data=await r.json();
+    if(!data.length){document.getElementById('directory-table').innerHTML='<div class="empty">No directory listings yet.</div>';return;}
+    let html='<table><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Role</th><th>Market</th><th>City</th><th>Company</th><th>NMLS</th><th>Matched</th></tr></thead><tbody>';
+    data.forEach(d=>{html+='<tr><td class="mono">'+fmt(d.created_at)+'</td><td>'+(d.name||'—')+'</td><td class="mono" style="font-size:12px">'+(d.email||'—')+'</td><td>'+badge(d.role)+'</td><td>'+(d.market||'—')+'</td><td>'+(d.city||'—')+'</td><td>'+(d.company_name||'—')+'</td><td class="mono">'+(d.nmls_number||'—')+'</td><td>'+(d.matched?'<span style="color:#5BB880">✓ Yes</span>':'<span style="color:rgba(232,224,208,0.3)">Pending</span>')+'</td></tr>';});
+    html+='</tbody></table>';
+    document.getElementById('directory-table').innerHTML=html;
+  }catch(e){document.getElementById('directory-table').innerHTML='<div class="empty">Error: '+e.message+'</div>';}
+}
 
-  function copyLink(url, btn) {
-    navigator.clipboard.writeText(url).then(function() {
-      var orig = btn.textContent; btn.textContent = '✓ Copied';
-      showToast('Copied to clipboard');
-      setTimeout(function() { btn.textContent = orig; }, 2000);
-    });
-  }
+async function loadCalendar(){
+  try{
+    const r=await fetch(SB+'/content_calendar?order=week.asc,day_of_week.asc&limit=50',{headers:H});
+    const data=await r.json();
+    if(!data.length){document.getElementById('cal-grid-wrap').innerHTML='<div class="empty">No calendar data.</div>';return;}
+    document.getElementById('cal-count').textContent=data.length+' posts';
+    const roleColor={agent:'rgba(181,121,58,0.15)',lo:'rgba(28,63,110,0.25)',partnership:'rgba(42,122,75,0.15)',all:'rgba(255,255,255,0.04)'};
+    let html='<div class="cal-grid">';
+    data.forEach(d=>{html+='<div class="cal-card" style="border-color:rgba(255,255,255,0.08);"><div class="cal-week">Wk'+d.week+' '+d.day_of_week.slice(0,3).toUpperCase()+'</div><div class="cal-topic">'+d.topic+'</div><div class="cal-meta">'+d.content_type+' · '+badge(d.target_role)+'</div><div class="cal-platform">'+d.platform+'</div><div style="font-size:11px;color:rgba(232,224,208,0.35);margin-top:10px;line-height:1.5">'+d.caption_hook.slice(0,80)+'...</div></div>';});
+    html+='</div>';
+    document.getElementById('cal-grid-wrap').innerHTML=html;
+  }catch(e){document.getElementById('cal-grid-wrap').innerHTML='<div class="empty">Error: '+e.message+'</div>';}
+}
+
+async function loadWebhooks(){
+  try{
+    const r=await fetch(SB+'/cv_webhooks?order=created_at.desc',{headers:H});
+    const data=await r.json();
+    document.getElementById('wh-count').textContent=data.length+' registered';
+    if(!data.length){document.getElementById('webhooks-list').innerHTML='<div class="empty">No webhooks configured yet.</div>';return;}
+    let html='';
+    data.forEach(d=>{html+='<div class="webhook-row"><div class="webhook-url">'+(d.url.length>60?d.url.slice(0,60)+'...':d.url)+'</div><span class="webhook-event">'+d.event+'</span><span class="wh-status '+(d.active?'wh-active':'wh-inactive')+'">'+(d.active?'Active':'Inactive')+'</span><div style="font-size:12px;color:rgba(232,224,208,0.4)">'+(d.label||'')+'</div></div>';});
+    document.getElementById('webhooks-list').innerHTML=html;
+  }catch(e){document.getElementById('webhooks-list').innerHTML='<div class="empty">Error: '+e.message+'</div>';}
+}
+
+// Init
+loadSignups();
+document.getElementById('last-updated').textContent='Updated: '+new Date().toLocaleTimeString();
 </script>
 </body>
 </html>

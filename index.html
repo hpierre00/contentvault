@@ -1,481 +1,612 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ContentVault — Professional Content for Realtors & Loan Officers</title>
-  <!-- build: 1777442192 -->
-  <link rel="stylesheet" href="styles.css"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ContentVault — The Co-Marketing Platform for Agent-LO Partnerships</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#0F0B07;
+  --cream:#F7F2E8;
+  --parchment:#EDE5D4;
+  --gold:#B5793A;
+  --gold-light:#D4964D;
+  --blue:#1C3F6E;
+  --blue-light:#2C5F8A;
+  --muted:#7A6E61;
+  --border:#D4C9B0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(247,242,232,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:64px;}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;letter-spacing:0.04em;color:var(--ink);}
+.nav-logo span{color:var(--gold);}
+nav ul{list-style:none;display:flex;gap:32px;}
+nav ul li a{font-size:13px;text-decoration:none;color:var(--muted);letter-spacing:0.04em;transition:color 0.2s;}
+nav ul li a:hover{color:var(--ink);}
+.nav-cta{background:var(--gold);color:white;padding:9px 20px;border-radius:2px;font-size:13px;text-decoration:none;letter-spacing:0.04em;transition:background 0.2s;}
+.nav-cta:hover{background:var(--gold-light);}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:120px 40px 80px;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 60% 40%, rgba(181,121,58,0.08) 0%, transparent 70%), radial-gradient(ellipse 50% 40% at 20% 80%, rgba(28,63,110,0.06) 0%, transparent 60%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:80px 80px;opacity:0.3;}
+.hero-inner{max-width:900px;text-align:center;position:relative;z-index:1;}
+.hero-badge{display:inline-block;background:var(--parchment);border:1px solid var(--border);color:var(--gold);font-size:11px;letter-spacing:0.12em;padding:6px 16px;border-radius:2px;margin-bottom:32px;text-transform:uppercase;}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(42px,7vw,80px);font-weight:500;line-height:1.08;letter-spacing:-0.01em;margin-bottom:24px;}
+.hero h1 em{font-style:italic;color:var(--gold);}
+.hero-sub{font-size:18px;color:var(--muted);max-width:560px;margin:0 auto 48px;line-height:1.7;font-weight:300;}
+.hero-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{background:var(--gold);color:white;padding:14px 32px;border-radius:2px;font-size:14px;text-decoration:none;letter-spacing:0.04em;transition:all 0.2s;display:inline-block;}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-1px);}
+.btn-secondary{background:transparent;color:var(--ink);padding:14px 32px;border-radius:2px;border:1px solid var(--border);font-size:14px;text-decoration:none;letter-spacing:0.04em;transition:all 0.2s;display:inline-block;}
+.btn-secondary:hover{border-color:var(--ink);}
+.hero-proof{margin-top:64px;display:flex;gap:48px;justify-content:center;flex-wrap:wrap;}
+.proof-stat{text-align:center;}
+.proof-stat .num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:500;color:var(--gold);}
+.proof-stat .label{font-size:12px;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;}
+
+/* SECTION SHELL */
+section{padding:96px 40px;}
+.container{max-width:1080px;margin:0 auto;}
+.section-label{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,52px);font-weight:500;line-height:1.15;margin-bottom:24px;}
+.section-sub{font-size:16px;color:var(--muted);max-width:540px;line-height:1.75;font-weight:300;}
+
+/* DIVIDER */
+.divider{width:48px;height:1px;background:var(--gold);margin:0 auto 48px;}
+
+/* WHAT IS IT */
+.what-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;margin-top:64px;}
+.what-text{}
+.what-feature-list{display:flex;flex-direction:column;gap:24px;margin-top:40px;}
+.wf{display:flex;gap:16px;align-items:flex-start;}
+.wf-icon{width:40px;height:40px;border-radius:2px;background:var(--parchment);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;}
+.wf-copy h4{font-size:15px;font-weight:500;margin-bottom:4px;}
+.wf-copy p{font-size:14px;color:var(--muted);line-height:1.6;}
+.what-visual{background:var(--parchment);border:1px solid var(--border);border-radius:4px;padding:32px;position:relative;overflow:hidden;}
+.what-visual::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light));}
+.preview-label{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;}
+.preview-card{background:white;border-radius:3px;padding:20px;margin-bottom:12px;border:1px solid var(--border);}
+.pc-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.pc-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:600;}
+.pc-name{font-size:13px;font-weight:500;}
+.pc-role{font-size:11px;color:var(--muted);}
+.pc-text{font-size:13px;line-height:1.6;color:#333;margin-bottom:10px;}
+.pc-badge{display:inline-block;font-size:10px;background:var(--parchment);border:1px solid var(--border);padding:3px 8px;border-radius:2px;color:var(--muted);}
+.pc-nmls{font-size:10px;color:var(--blue-light);margin-top:8px;}
+
+/* CALENDAR - Item 2 */
+.cal-section{background:var(--ink);color:var(--cream);}
+.cal-section .section-label{color:var(--gold-light);}
+.cal-section .section-title{color:var(--cream);}
+.cal-section .section-sub{color:rgba(247,242,232,0.6);}
+.cal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;margin-top:48px;}
+.cal-item{background:var(--ink);padding:24px 20px;border-bottom:none;}
+.cal-item:hover{background:#1a140c;}
+.cal-week{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+.cal-day{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;margin-bottom:12px;color:var(--cream);}
+.cal-topic{font-size:13px;font-weight:500;margin-bottom:6px;}
+.cal-type{font-size:11px;color:rgba(247,242,232,0.4);letter-spacing:0.06em;}
+.cal-platform{display:inline-block;font-size:10px;border:1px solid rgba(255,255,255,0.15);padding:3px 8px;border-radius:2px;margin-top:10px;color:rgba(247,242,232,0.5);}
+
+/* COMPLIANCE - Item 1 */
+.compliance-banner{background:var(--blue);color:white;padding:48px 40px;text-align:center;margin:0;}
+.compliance-banner h3{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;margin-bottom:12px;}
+.compliance-banner p{font-size:14px;opacity:0.8;max-width:600px;margin:0 auto 24px;line-height:1.7;}
+.compliance-tags{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.ctag{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);padding:6px 14px;border-radius:2px;font-size:12px;letter-spacing:0.04em;}
+
+/* CO-BRAND BUILDER - Item 3 */
+.cobrand-section{}
+.cobrand-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;margin-top:48px;}
+.cobrand-form{background:var(--parchment);border:1px solid var(--border);border-radius:4px;padding:40px;}
+.cobrand-form::before{content:'CO-BRAND BUILDER';display:block;font-size:10px;letter-spacing:0.14em;color:var(--gold);margin-bottom:24px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.form-group label{font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);}
+.form-group input,.form-group select{background:white;border:1px solid var(--border);border-radius:2px;padding:10px 12px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--ink);outline:none;transition:border-color 0.2s;}
+.form-group input:focus,.form-group select:focus{border-color:var(--gold);}
+.form-group input.lo-only{display:none;}
+.cobrand-preview{background:white;border:1px solid var(--border);border-radius:4px;padding:32px;min-height:300px;}
+.preview-header{text-align:center;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+.preview-logos{display:flex;align-items:center;gap:16px;justify-content:center;margin-bottom:16px;}
+.logo-circle{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:white;}
+.logo-divider{font-size:12px;color:var(--muted);}
+.preview-names{font-family:'Cormorant Garamond',serif;font-size:18px;}
+.preview-body{font-size:13px;line-height:1.7;color:#333;margin-bottom:16px;}
+.preview-footer{font-size:10px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:12px;}
+
+/* PARTNER DIRECTORY - Item 6 */
+.directory-section{background:var(--parchment);}
+.dir-inner{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;}
+.dir-form{background:white;border:1px solid var(--border);border-radius:4px;padding:40px;}
+.dir-form::before{content:'JOIN THE DIRECTORY';display:block;font-size:10px;letter-spacing:0.14em;color:var(--gold);margin-bottom:24px;}
+.dir-how{margin-top:48px;}
+.dir-step{display:flex;gap:20px;margin-bottom:28px;align-items:flex-start;}
+.step-num{width:32px;height:32px;border:1px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:18px;flex-shrink:0;}
+.step-copy h4{font-size:15px;font-weight:500;margin-bottom:4px;}
+.step-copy p{font-size:14px;color:var(--muted);}
+
+/* PRICING - Item 5 note */
+#founding{background:var(--ink);}
+#founding .section-label{color:var(--gold-light);}
+#founding .section-title{color:var(--cream);}
+#founding .section-sub{color:rgba(247,242,232,0.6);}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
+.price-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:32px;position:relative;transition:border-color 0.2s;}
+.price-card.featured{border-color:var(--gold);background:rgba(181,121,58,0.08);}
+.price-card.featured::before{content:'FLAGSHIP';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gold);color:white;font-size:10px;letter-spacing:0.1em;padding:4px 12px;border-radius:2px;}
+.price-name{font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(247,242,232,0.5);margin-bottom:16px;}
+.price-amount{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:500;color:var(--cream);margin-bottom:4px;}
+.price-period{font-size:13px;color:rgba(247,242,232,0.4);}
+.price-founding{font-size:11px;color:var(--gold);margin:12px 0 24px;letter-spacing:0.04em;}
+.price-list{list-style:none;margin-bottom:32px;}
+.price-list li{font-size:13px;color:rgba(247,242,232,0.7);padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;gap:10px;align-items:baseline;}
+.price-list li::before{content:'→';color:var(--gold);flex-shrink:0;}
+.price-cta{display:block;text-align:center;padding:12px;border-radius:2px;font-size:13px;letter-spacing:0.04em;text-decoration:none;transition:all 0.2s;}
+.price-cta.outline{border:1px solid rgba(255,255,255,0.2);color:var(--cream);}
+.price-cta.outline:hover{border-color:var(--gold);color:var(--gold);}
+.price-cta.solid{background:var(--gold);color:white;}
+.price-cta.solid:hover{background:var(--gold-light);}
+
+/* SIGNUP MODAL */
+.signup-section{text-align:center;}
+.signup-wrap{max-width:560px;margin:0 auto;background:white;border:1px solid var(--border);border-radius:4px;padding:48px;box-shadow:0 8px 48px rgba(15,11,7,0.08);}
+.signup-wrap::before{content:'START HERE';display:block;font-size:10px;letter-spacing:0.14em;color:var(--gold);margin-bottom:20px;}
+.signup-form input,.signup-form select{width:100%;border:1px solid var(--border);border-radius:2px;padding:12px 16px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--ink);outline:none;margin-bottom:12px;background:var(--cream);transition:border-color 0.2s;}
+.signup-form input:focus,.signup-form select:focus{border-color:var(--gold);background:white;}
+.signup-form .lo-field{display:none;}
+.signup-form button{width:100%;background:var(--gold);color:white;border:none;padding:14px;border-radius:2px;font-size:14px;letter-spacing:0.06em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s;}
+.signup-form button:hover{background:var(--gold-light);}
+.signup-form button:disabled{opacity:0.5;cursor:not-allowed;}
+.form-note{font-size:12px;color:var(--muted);margin-top:16px;line-height:1.6;}
+.success-msg{display:none;background:var(--parchment);border:1px solid var(--border);border-radius:3px;padding:24px;text-align:center;}
+.success-msg h4{font-family:'Cormorant Garamond',serif;font-size:22px;margin-bottom:8px;}
+.success-msg p{font-size:14px;color:var(--muted);}
+
+/* INTEGRATION - Item 4 */
+.integrations-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:32px;}
+.int-badge{background:var(--parchment);border:1px solid var(--border);padding:10px 18px;border-radius:2px;font-size:13px;display:flex;align-items:center;gap:8px;}
+.int-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);}
+
+/* COMMUNITY - Item 5 */
+.community-section{background:var(--blue);color:white;}
+.community-inner{text-align:center;}
+.community-inner .section-title{color:white;font-family:'Cormorant Garamond',serif;}
+.community-inner .section-sub{color:rgba(255,255,255,0.7);margin:0 auto 40px;}
+.community-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
+.comm-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:4px;padding:28px;text-align:left;}
+.comm-card h4{font-size:15px;font-weight:500;margin-bottom:8px;color:white;}
+.comm-card p{font-size:13px;color:rgba(255,255,255,0.6);line-height:1.65;}
+.comm-day{font-size:11px;color:var(--gold-light);letter-spacing:0.08em;margin-bottom:10px;text-transform:uppercase;}
+
+/* FOOTER */
+footer{background:var(--ink);color:rgba(247,242,232,0.5);text-align:center;padding:40px;font-size:13px;border-top:1px solid rgba(255,255,255,0.06);}
+footer strong{color:var(--cream);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  nav ul{display:none;}
+  .what-grid,.cobrand-grid,.dir-inner,.pricing-grid,.cal-grid,.community-grid{grid-template-columns:1fr;}
+  .cal-grid{grid-template-columns:1fr 1fr;}
+  .form-row{grid-template-columns:1fr;}
+  section{padding:64px 24px;}
+  nav{padding:0 24px;}
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.hero-inner>*{animation:fadeUp 0.8s ease both;}
+.hero-badge{animation-delay:0.1s;}
+.hero h1{animation-delay:0.2s;}
+.hero-sub{animation-delay:0.35s;}
+.hero-actions{animation-delay:0.5s;}
+.hero-proof{animation-delay:0.65s;}
+</style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav class="cv-nav">
-  <a href="#" class="cv-nav-logo">Content<span>Vault</span></a>
-  <div class="cv-nav-links">
-    <a href="#solution" class="cv-nav-link">What's Inside</a>
-    <a href="#pricing" class="cv-nav-link">Pricing</a>
-    <a href="#founding" class="cv-nav-cta">Reserve Founding Rate</a>
-  </div>
+<nav>
+  <div class="nav-logo">Content<span>Vault</span></div>
+  <ul>
+    <li><a href="#what">What's Inside</a></li>
+    <li><a href="#calendar">Content Plan</a></li>
+    <li><a href="#compliance">Compliance</a></li>
+    <li><a href="#cobrand">Co-Brand</a></li>
+    <li><a href="#directory">Partner Match</a></li>
+    <li><a href="#founding">Pricing</a></li>
+  </ul>
+  <a href="#signup" class="nav-cta">Get Access</a>
 </nav>
 
 <!-- HERO -->
-<section style="background: var(--white); border-bottom: 1px solid var(--gray-border);">
-  <div class="cv-hero">
-    <div class="hero-left">
-      <div class="cv-section-tag">For Realtors & Loan Officers</div>
-      <h1 class="cv-h1">
-        Stop losing clients<br/>
-        to professionals<br/>
-        <em style="font-style:italic; color: var(--gold);">who show up online.</em>
-      </h1>
-      <p class="cv-body" style="max-width: 480px; margin-bottom: 2rem;">
-        Done-for-you social content, email templates, and co-branded materials — delivered monthly. Built by someone with <strong style="color: var(--navy); font-weight: 500;">15 years</strong> in residential real estate and mortgage. The only membership with content designed for <strong style="color: var(--navy); font-weight: 500;">agent-LO partnerships.</strong>
-      </p>
-      <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2.5rem;">
-        <a href="#founding" class="btn-navy">Reserve Founding Rate →</a>
-        <a href="#solution" class="btn-outline">See What's Inside</a>
-      </div>
-      <div class="cv-proof">
-        <div>
-          <div class="cv-stat-value">90<span style="font-size:1.8rem;">%</span></div>
-          <div style="font-size:0.72rem; color: var(--gray); margin-top:0.3rem; line-height:1.4;">of clients would reuse<br/>their agent — 6% do</div>
-        </div>
-        <div>
-          <div class="cv-stat-value">60<span style="font-size:1.8rem;">+</span></div>
-          <div style="font-size:0.72rem; color: var(--gray); margin-top:0.3rem; line-height:1.4;">templates delivered<br/>every month</div>
-        </div>
-        <div>
-          <div class="cv-stat-value gold">$0</div>
-          <div style="font-size:0.72rem; color: var(--gray); margin-top:0.3rem; line-height:1.4;">done-for-you tools<br/>exist for LOs. Until now.</div>
-        </div>
-      </div>
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">Founding Member Pricing — Limited</div>
+    <h1>The Co-Marketing Platform<br/>for <em>Agent-LO Partnerships</em></h1>
+    <p class="hero-sub">Done-for-you content, a monthly posting calendar, RESPA-compliant LO templates, and a partner matching directory. The only membership built for both sides of the referral relationship.</p>
+    <div class="hero-actions">
+      <a href="#signup" class="btn-primary">Claim Founding Rate</a>
+      <a href="#what" class="btn-secondary">See What's Inside</a>
     </div>
+    <div class="hero-proof">
+      <div class="proof-stat"><div class="num">3</div><div class="label">Plans — Agent, LO, Partnership</div></div>
+      <div class="proof-stat"><div class="num">12</div><div class="label">Posts Per Month, Planned</div></div>
+      <div class="proof-stat"><div class="num">100%</div><div class="label">RESPA-Compliant LO Templates</div></div>
+    </div>
+  </div>
+</section>
 
-    <!-- LEAD MAGNET FORM -->
-    <div class="cv-hero-right">
-      <div style="font-size:0.62rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color: var(--gold); margin-bottom:0.8rem;">Free Starter Pack</div>
-      <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:600; color:var(--white); margin-bottom:0.5rem; line-height:1.2;">5 Ready-to-Post Templates — Free</h3>
-      <p style="font-size:0.83rem; color:rgba(255,255,255,0.6); margin-bottom:1.5rem; line-height:1.7;">3 agent templates + 2 LO templates. Canva-ready. No card required.</p>
-      <form id="leadForm">
-        <input type="text" name="name" class="cv-input" placeholder="Your name" required style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.12); color:var(--white);"/>
-        <input type="email" name="email" class="cv-input" placeholder="Your email address" required style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.12); color:var(--white);"/>
-        <button type="submit" class="btn-gold" id="leadBtn" style="width:100%; margin-top:0.2rem;">Send Me The Free Templates →</button>
-        <p style="font-size:0.65rem; color:rgba(255,255,255,0.3); text-align:center; margin-top:0.7rem;">No spam. Unsubscribe anytime.</p>
-      </form>
-      <div id="leadSuccess" style="display:none; text-align:center; padding:1.5rem 0;">
-        <div style="font-size:2rem; margin-bottom:0.5rem; color:var(--gold);">✓</div>
-        <p style="color:rgba(255,255,255,0.85); font-size:0.95rem;">Check your inbox — templates on the way.</p>
+<!-- WHAT'S INSIDE -->
+<section id="what">
+  <div class="container">
+    <div class="what-grid">
+      <div class="what-text">
+        <div class="section-label">What You Get</div>
+        <h2 class="section-title">Everything you need to stay visible, without the admin work.</h2>
+        <p class="section-sub">ContentVault members get a full content system, not just templates. Posts, emails, co-branded materials, and a calendar that tells you exactly what to post and when.</p>
+        <div class="what-feature-list">
+          <div class="wf"><div class="wf-icon">📅</div><div class="wf-copy"><h4>Monthly Content Calendar</h4><p>Delivered the 1st of each month. 12 post slots per month with exact topics, captions, hashtags, and platforms.</p></div></div>
+          <div class="wf"><div class="wf-icon">⚖️</div><div class="wf-copy"><h4>RESPA-Compliant LO Templates</h4><p>Every loan officer template includes NMLS number, state license, Equal Housing Lender, and co-marketing disclosure placeholders. Ready for compliance review.</p></div></div>
+          <div class="wf"><div class="wf-icon">🤝</div><div class="wf-copy"><h4>Co-Brand Builder</h4><p>Enter both parties' info once. Templates auto-populate with both agents' logos, names, and contact details — no Canva juggling.</p></div></div>
+          <div class="wf"><div class="wf-icon">🔗</div><div class="wf-copy"><h4>CRM Integration via Zapier/Make</h4><p>Push signups directly into Follow Up Boss, KVCore, Surefire, or any other CRM. Your workflow, not ours.</p></div></div>
+          <div class="wf"><div class="wf-icon">🏛️</div><div class="wf-copy"><h4>Private Partner Community</h4><p>Monthly accountability, content sharing, and deal talk with other agent-LO pairs. Not a Facebook group — a curated working community.</p></div></div>
+          <div class="wf"><div class="wf-icon">🗂️</div><div class="wf-copy"><h4>Partner Matching Directory</h4><p>No referral partner yet? Get listed. We match agents with loan officers in your market and introduce compatible pairs weekly.</p></div></div>
+        </div>
+      </div>
+      <div class="what-visual">
+        <div class="preview-label">Sample May Template — Partnership Plan</div>
+        <div class="preview-card">
+          <div class="pc-header">
+            <div class="pc-avatar">SJ</div>
+            <div><div class="pc-name">Sarah Johnson + Mike Torres</div><div class="pc-role">Realtor · Loan Officer · Miami, FL</div></div>
+          </div>
+          <div class="pc-text">Rates moved again this week. Here is the honest breakdown of what it does to your monthly payment on a $400K home — and what buyers should be doing right now instead of waiting.</div>
+          <div class="pc-badge">Week 1 Wednesday · Instagram</div>
+          <div class="pc-nmls">NMLS #[YOUR NMLS] | Licensed in FL | Equal Housing Lender | RESPA §8 compliant</div>
+        </div>
+        <div class="preview-card">
+          <div class="pc-header">
+            <div class="pc-avatar" style="background:linear-gradient(135deg,var(--blue),var(--blue-light))">MT</div>
+            <div><div class="pc-name">Email Sequence — Market Update</div><div class="pc-role">Week 3 · All contacts</div></div>
+          </div>
+          <div class="pc-text">Subject: What we're seeing in [MARKET] this month — sent by both of you, co-branded, referral-ready.</div>
+          <div class="pc-badge">Email · Month 3 Week 3</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- TICKER -->
-<div class="cv-ticker">
-  <div class="cv-ticker-inner">
-    <span class="cv-ticker-item">60+ Templates Monthly</span>
-    <span class="cv-ticker-item">US & Canada Versions</span>
-    <span class="cv-ticker-item">Agent Content</span>
-    <span class="cv-ticker-item">Loan Officer Content</span>
-    <span class="cv-ticker-item">Co-Branded Partnership Templates</span>
-    <span class="cv-ticker-item">RESPA-Compliant Co-Marketing</span>
-    <span class="cv-ticker-item">Canva-Ready</span>
-    <span class="cv-ticker-item">Monthly Content Calendar</span>
-    <span class="cv-ticker-item">Reels & TikTok Scripts</span>
-    <span class="cv-ticker-item">Email Newsletter Templates</span>
-    <span class="cv-ticker-item">Built by Industry Veterans</span>
-    <span class="cv-ticker-item">60+ Templates Monthly</span>
-    <span class="cv-ticker-item">US & Canada Versions</span>
-    <span class="cv-ticker-item">Agent Content</span>
-    <span class="cv-ticker-item">Loan Officer Content</span>
-    <span class="cv-ticker-item">Co-Branded Partnership Templates</span>
-    <span class="cv-ticker-item">RESPA-Compliant Co-Marketing</span>
-    <span class="cv-ticker-item">Canva-Ready</span>
-    <span class="cv-ticker-item">Monthly Content Calendar</span>
-    <span class="cv-ticker-item">Reels & TikTok Scripts</span>
-    <span class="cv-ticker-item">Email Newsletter Templates</span>
-    <span class="cv-ticker-item">Built by Industry Veterans</span>
+<!-- COMPLIANCE - Item 1 -->
+<div class="compliance-banner" id="compliance">
+  <h3>Built for Loan Officers Who Can't Afford a Compliance Problem</h3>
+  <p>ContentVault is the only content membership at this price point with RESPA-compliant co-marketing language built into every LO and partnership template. NMLS number fields, Equal Housing Lender language, state license placeholders, and the §8 co-marketing disclosure are pre-built and review-ready.</p>
+  <div class="compliance-tags">
+    <div class="ctag">NMLS # Field</div>
+    <div class="ctag">Equal Housing Lender</div>
+    <div class="ctag">State License Placeholder</div>
+    <div class="ctag">RESPA §8 Disclosure</div>
+    <div class="ctag">Compliance-Review Ready</div>
   </div>
 </div>
 
-<!-- PROBLEM -->
-<section class="cv-section" style="background: var(--off-white);">
-  <div style="max-width:1200px; margin:0 auto;">
-    <div class="cv-section-tag">The Problem</div>
-    <h2 class="cv-h2">Your pipeline is leaking<br/>six figures annually.</h2>
-    <p class="cv-body" style="max-width:560px; margin-bottom:3.5rem;">The income gap between top producers and everyone else isn't talent. It's infrastructure. Here are the five income killers every agent and LO faces.</p>
+<!-- CALENDAR - Item 2 -->
+<section class="cal-section" id="calendar">
+  <div class="container">
+    <div class="section-label">Item 2 — Monthly Content Plan</div>
+    <h2 class="section-title">Your May posting calendar, pre-built.</h2>
+    <p class="section-sub">Every 1st of the month you receive this calendar: exact posting dates, topics, captions, hashtags, and platforms. No guessing. No planning. Just post.</p>
+    <div class="cal-grid">
+      <div class="cal-item"><div class="cal-week">Week 1</div><div class="cal-day">Monday</div><div class="cal-topic">Spring Market Snapshot</div><div class="cal-type">Educational · Agent</div><div class="cal-platform">Instagram</div></div>
+      <div class="cal-item"><div class="cal-week">Week 1</div><div class="cal-day">Wednesday</div><div class="cal-topic">Rate Reality Check</div><div class="cal-type">Educational · LO</div><div class="cal-platform">Instagram</div></div>
+      <div class="cal-item"><div class="cal-week">Week 1</div><div class="cal-day">Friday</div><div class="cal-topic">Agent + LO Alignment</div><div class="cal-type">Co-branded</div><div class="cal-platform">Instagram</div></div>
+      <div class="cal-item"><div class="cal-week">Week 2</div><div class="cal-day">Monday</div><div class="cal-topic">5 Things Sellers Wish They Knew</div><div class="cal-type">Social Proof · Agent</div><div class="cal-platform">Instagram</div></div>
+      <div class="cal-item"><div class="cal-week">Week 2</div><div class="cal-day">Wednesday</div><div class="cal-topic">Pre-approval vs Pre-qual</div><div class="cal-type">Client Education · LO</div><div class="cal-platform">Instagram</div></div>
+      <div class="cal-item"><div class="cal-week">Week 3</div><div class="cal-day">Friday</div><div class="cal-topic">Monthly Market Update</div><div class="cal-type">Email Blast · All</div><div class="cal-platform">Email</div></div>
+      <div class="cal-item"><div class="cal-week">Week 4</div><div class="cal-day">Monday</div><div class="cal-topic">Why I Got Into Real Estate</div><div class="cal-type">Personal Brand · Agent</div><div class="cal-platform">Instagram</div></div>
+      <div class="cal-item"><div class="cal-week">Week 4</div><div class="cal-day">Friday</div><div class="cal-topic">Referral Trigger Post</div><div class="cal-type">Referral · Partnership</div><div class="cal-platform">Instagram</div></div>
+    </div>
+  </div>
+</section>
 
-    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:1px; background:var(--gray-border); border:1px solid var(--gray-border); border-radius:4px; overflow:hidden;">
-      <div style="background:var(--white); padding:2rem;">
-        <div style="font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; color:var(--gold); opacity:0.5; line-height:1; margin-bottom:0.8rem;">01</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; color:var(--navy); margin-bottom:0.6rem;">The Referral Gap</div>
-        <div class="cv-body" style="font-size:0.8rem;">90% of past clients say they'd use their agent again. Only 6% hear from them after closing. That silence costs the average agent $50,000–$200,000 per year.</div>
+<!-- CO-BRAND BUILDER - Item 3 -->
+<section class="cobrand-section" id="cobrand">
+  <div class="container">
+    <div class="section-label">Item 3 — Co-Brand Builder</div>
+    <h2 class="section-title">One form. Both names on every template.</h2>
+    <p class="section-sub">Enter your information and your partner's once. The preview updates live. Download or copy directly into any Canva template — no manual editing.</p>
+    <div class="cobrand-grid">
+      <div class="cobrand-form">
+        <div class="form-row">
+          <div class="form-group"><label>Your Name</label><input type="text" id="a-name" placeholder="Sarah Johnson" oninput="updatePreview()"/></div>
+          <div class="form-group"><label>Your Role</label><select id="a-role" onchange="updatePreview();toggleLOFields()"><option value="agent">Agent</option><option value="lo">Loan Officer</option></select></div>
+        </div>
+        <div class="form-group"><label>Your Company / Brokerage</label><input type="text" id="a-company" placeholder="Compass Real Estate" oninput="updatePreview()"/></div>
+        <div class="form-group lo-field" id="a-nmls-group"><label>Your NMLS #</label><input type="text" id="a-nmls" placeholder="123456" oninput="updatePreview()"/></div>
+        <div class="form-group lo-field" id="a-state-group"><label>Licensed In (State)</label><input type="text" id="a-state" placeholder="FL" oninput="updatePreview()"/></div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:20px 0;"/>
+        <div class="form-row">
+          <div class="form-group"><label>Partner's Name</label><input type="text" id="b-name" placeholder="Mike Torres" oninput="updatePreview()"/></div>
+          <div class="form-group"><label>Partner's Role</label><select id="b-role" onchange="updatePreview();toggleLOFields()"><option value="lo">Loan Officer</option><option value="agent">Agent</option></select></div>
+        </div>
+        <div class="form-group"><label>Partner's Company</label><input type="text" id="b-company" placeholder="Coastal Lending Group" oninput="updatePreview()"/></div>
+        <div class="form-group" id="b-nmls-group"><label>Partner's NMLS #</label><input type="text" id="b-nmls" placeholder="789012" oninput="updatePreview()"/></div>
+        <div class="form-group" id="b-state-group"><label>Partner Licensed In</label><input type="text" id="b-state" placeholder="FL" oninput="updatePreview()"/></div>
+        <div class="form-group"><label>Your Market / City</label><input type="text" id="market" placeholder="Miami, FL" oninput="updatePreview()"/></div>
       </div>
-      <div style="background:var(--white); padding:2rem;">
-        <div style="font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; color:var(--gold); opacity:0.5; line-height:1; margin-bottom:0.8rem;">02</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; color:var(--navy); margin-bottom:0.6rem;">No Partnership Tooling</div>
-        <div class="cv-body" style="font-size:0.8rem;">76% of borrowers choose their lender based on their agent's recommendation — yet the agent-LO relationship has zero dedicated infrastructure.</div>
-      </div>
-      <div style="background:var(--white); padding:2rem;">
-        <div style="font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; color:var(--gold); opacity:0.5; line-height:1; margin-bottom:0.8rem;">03</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; color:var(--navy); margin-bottom:0.6rem;">CRM Underadoption</div>
-        <div class="cv-body" style="font-size:0.8rem;">45% of agents use their CRM a few times per month. 25% never use it. Agents spend 13 hours/week on admin that generates zero income.</div>
-      </div>
-      <div style="background:var(--white); padding:2rem;">
-        <div style="font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; color:var(--gold); opacity:0.5; line-height:1; margin-bottom:0.8rem;">04</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; color:var(--navy); margin-bottom:0.6rem;">Value Proof Crisis</div>
-        <div class="cv-body" style="font-size:0.8rem;">Post-NAR settlement, agents must justify their commission in writing before showing a single home. 57% of Americans say they'd buy without an agent.</div>
-      </div>
-      <div style="background:var(--white); padding:2rem;">
-        <div style="font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; color:var(--gold); opacity:0.5; line-height:1; margin-bottom:0.8rem;">05</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; color:var(--navy); margin-bottom:0.6rem;">Content Paralysis</div>
-        <div class="cv-body" style="font-size:0.8rem;">Professionals who post consistently generate inbound leads at near-zero cost. Everyone else pays $139–$223 per internet lead with 1–2% conversion.</div>
-      </div>
-      <div style="background:var(--gold-dim); border:none; padding:2rem;">
-        <div style="font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; color:var(--gold); line-height:1; margin-bottom:0.8rem;">→</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; color:var(--navy); margin-bottom:0.6rem;">ContentVault solves #5 and starts fixing #1</div>
-        <div class="cv-body" style="font-size:0.8rem;">Consistent content keeps you visible to past clients. It's the fastest problem to fix — and it compounds into referral income over time.</div>
+      <div>
+        <div class="cobrand-preview" id="cobrand-preview">
+          <div class="preview-header">
+            <div class="preview-logos">
+              <div class="logo-circle" id="prev-a-avatar" style="background:linear-gradient(135deg,var(--gold),var(--gold-light))">SJ</div>
+              <div class="logo-divider">×</div>
+              <div class="logo-circle" id="prev-b-avatar" style="background:linear-gradient(135deg,var(--blue),var(--blue-light))">MT</div>
+            </div>
+            <div class="preview-names" id="prev-names">Sarah Johnson × Mike Torres</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px" id="prev-market">Miami, FL</div>
+          </div>
+          <div class="preview-body" id="prev-body">
+            Rates moved again this week. Here is the honest breakdown of what it does to your monthly payment on a $400K home — and what buyers should do right now instead of waiting.
+          </div>
+          <div class="preview-footer" id="prev-footer">
+            <strong id="prev-a-line">Sarah Johnson</strong> · Compass Real Estate<br/>
+            <strong id="prev-b-line">Mike Torres</strong> · Coastal Lending Group<br/>
+            <span id="prev-nmls">NMLS #789012 | Licensed in FL | Equal Housing Lender</span><br/>
+            <em style="font-size:9px">Per RESPA §8: No referral fee or thing of value exchanged for any referral of settlement service business.</em>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:16px;line-height:1.6;">This preview reflects your co-branded info block. Copy it into any Canva template with one paste. Members on the Partnership Plan get all 12 monthly templates pre-populated via the Co-Brand Builder.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SOLUTION -->
-<section class="cv-section" id="solution" style="background:var(--white);">
-  <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:5vw; align-items:start;">
-    <div>
-      <div class="cv-section-tag">What You Get</div>
-      <h2 class="cv-h2">A complete content<br/>system, not templates.</h2>
-      <p class="cv-body" style="margin-bottom:2.5rem;">Every piece is written by someone who spent 15 years in residential real estate and mortgage — not a generic copywriter. Industry-specific, compliance-aware, and built for both audiences simultaneously.</p>
-
-      <div style="display:flex; flex-direction:column; gap:1.5rem;">
-        <div style="display:grid; grid-template-columns:48px 1fr; gap:1rem; align-items:start;">
-          <div style="width:48px;height:48px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">📱</div>
-          <div>
-            <div class="cv-h3" style="font-size:1rem;">20+ Social Media Graphics</div>
-            <p class="cv-body" style="font-size:0.8rem;">Instagram, Facebook, and LinkedIn posts for agents AND loan officers. Market updates, buyer/seller education, rate explainers. US and Canada versions of every caption.</p>
-          </div>
-        </div>
-        <div style="display:grid; grid-template-columns:48px 1fr; gap:1rem; align-items:start;">
-          <div style="width:48px;height:48px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">🎬</div>
-          <div>
-            <div class="cv-h3" style="font-size:1rem;">4 Reels & TikTok Scripts</div>
-            <p class="cv-body" style="font-size:0.8rem;">Hook, body, and CTA written for short-form video. Read from a script — no guessing what to say. Designed for organic reach.</p>
-          </div>
-        </div>
-        <div style="display:grid; grid-template-columns:48px 1fr; gap:1rem; align-items:start;">
-          <div style="width:48px;height:48px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">📧</div>
-          <div>
-            <div class="cv-h3" style="font-size:1rem;">Email Newsletter Template</div>
-            <p class="cv-body" style="font-size:0.8rem;">Monthly market update email your clients actually want to read. Designed to generate replies, not just opens.</p>
-          </div>
-        </div>
-        <div style="display:grid; grid-template-columns:48px 1fr; gap:1rem; align-items:start;">
-          <div style="width:48px;height:48px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">🤝</div>
-          <div>
-            <div class="cv-h3" style="font-size:1rem;">Co-Branded Partnership Content</div>
-            <p class="cv-body" style="font-size:0.8rem;">The only membership with templates for agent-LO pairs posting together. RESPA/FINTRAC-compliant co-marketing guidance included.</p>
-          </div>
-        </div>
-        <div style="display:grid; grid-template-columns:48px 1fr; gap:1rem; align-items:start;">
-          <div style="width:48px;height:48px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">📅</div>
-          <div>
-            <div class="cv-h3" style="font-size:1rem;">Monthly Content Calendar</div>
-            <p class="cv-body" style="font-size:0.8rem;">Exactly what to post and when. Eliminates the daily "what do I post?" paralysis. Drops the 1st of every month.</p>
-          </div>
-        </div>
-      </div>
+<!-- INTEGRATIONS - Item 4 -->
+<section style="background:var(--parchment);padding:64px 40px;" id="integrations">
+  <div class="container" style="text-align:center;">
+    <div class="section-label">Item 4 — CRM Integrations</div>
+    <h2 class="section-title" style="max-width:480px;margin:0 auto 16px;">Plugs into the tools you already use.</h2>
+    <p class="section-sub" style="margin:0 auto 32px;">When a new signup comes through ContentVault, your CRM gets notified automatically via Zapier or Make. No copy-paste. No missed leads.</p>
+    <div class="integrations-row" style="justify-content:center;">
+      <div class="int-badge"><span class="dot"></span>Follow Up Boss</div>
+      <div class="int-badge"><span class="dot"></span>KVCore</div>
+      <div class="int-badge"><span class="dot"></span>Surefire CRM</div>
+      <div class="int-badge"><span class="dot"></span>BombBomb</div>
+      <div class="int-badge"><span class="dot"></span>Zapier</div>
+      <div class="int-badge"><span class="dot"></span>Make.com</div>
+      <div class="int-badge"><span class="dot"></span>Any CRM with webhook support</div>
     </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:24px;">Integration hooks are available on all plans. Contact us after signup to configure your webhook URL.</p>
+  </div>
+</section>
 
-    <!-- ECOSYSTEM ROADMAP -->
-    <div>
-      <div style="background:var(--navy); border-radius:4px; padding:2rem; color:var(--white); margin-bottom:1.5rem;">
-        <div style="font-size:0.62rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:0.8rem;">Product Ecosystem Roadmap</div>
-        <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:600; color:var(--white); margin-bottom:0.8rem; line-height:1.2;">ContentVault is product one<br/>of five.</h3>
-        <p style="font-size:0.8rem; color:rgba(255,255,255,0.6); line-height:1.7; margin-bottom:1.2rem;">Founding members get first access and founding pricing on every product in the ecosystem.</p>
-        <div style="display:flex; flex-direction:column; gap:0.8rem;">
-          <div style="display:flex; align-items:flex-start; gap:0.8rem; font-size:0.78rem; color:rgba(255,255,255,0.7); line-height:1.55;">
-            <span style="color:var(--gold); flex-shrink:0;">◆</span>
-            <span><strong style="color:var(--white);">ContentVault</strong> — Done-for-you content membership <span style="color:var(--gold);">Live Now</span></span>
-          </div>
-          <div style="display:flex; align-items:flex-start; gap:0.8rem; font-size:0.78rem; color:rgba(255,255,255,0.7); line-height:1.55;">
-            <span style="color:rgba(255,255,255,0.2); flex-shrink:0;">◆</span>
-            <span><strong style="color:var(--white);">The Closing Loop</strong> — Post-close referral nurture engine — Q3 2025</span>
-          </div>
-          <div style="display:flex; align-items:flex-start; gap:0.8rem; font-size:0.78rem; color:rgba(255,255,255,0.7); line-height:1.55;">
-            <span style="color:rgba(255,255,255,0.2); flex-shrink:0;">◆</span>
-            <span><strong style="color:var(--white);">PartnerPulse</strong> — Agent-LO relationship dashboard — Q4 2025</span>
-          </div>
-          <div style="display:flex; align-items:flex-start; gap:0.8rem; font-size:0.78rem; color:rgba(255,255,255,0.7); line-height:1.55;">
-            <span style="color:rgba(255,255,255,0.2); flex-shrink:0;">◆</span>
-            <span><strong style="color:var(--white);">ValueProof</strong> — Commission justification toolkit — Q1 2026</span>
-          </div>
-          <div style="display:flex; align-items:flex-start; gap:0.8rem; font-size:0.78rem; color:rgba(255,255,255,0.7); line-height:1.55;">
-            <span style="color:rgba(255,255,255,0.2); flex-shrink:0;">◆</span>
-            <span><strong style="color:var(--white);">DealSync</strong> — Shared transaction coordination — Q2 2026</span>
-          </div>
+<!-- COMMUNITY - Item 5 -->
+<section class="community-section" id="community">
+  <div class="container community-inner">
+    <div class="section-label" style="color:var(--gold-light);">Item 5 — Private Partner Community</div>
+    <h2 class="section-title">A working community, not a chatroom.</h2>
+    <p class="section-sub">ContentVault members get access to a private workspace with a structured weekly rhythm — built around accountability, content sharing, and referral partnership.</p>
+    <div class="community-grid">
+      <div class="comm-card"><div class="comm-day">Every Monday</div><h4>Content Check-In</h4><p>Post what you're going live with this week. Your partner confirms. Accountability creates consistency.</p></div>
+      <div class="comm-card"><div class="comm-day">Every Wednesday</div><h4>Win or Question</h4><p>Share a result from the week's content or bring a real question to the group. No fluff, no inspiration posts.</p></div>
+      <div class="comm-card"><div class="comm-day">Every Friday</div><h4>Partner Check-In</h4><p>Tag your referral partner. Confirm you connected this week. The partnership stays warm, not dormant.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNER DIRECTORY - Item 6 -->
+<section class="directory-section" id="directory">
+  <div class="container">
+    <div class="section-label">Item 6 — Partner Matching Directory</div>
+    <h2 class="section-title">Find your referral partner here.</h2>
+    <p class="section-sub" style="margin-bottom:48px;">No partnership yet? List yourself in the directory. We review matches weekly and introduce compatible agent-LO pairs by email. Free with any membership.</p>
+    <div class="dir-inner">
+      <div>
+        <div class="dir-how">
+          <div class="dir-step"><div class="step-num">1</div><div class="step-copy"><h4>Submit your listing</h4><p>Name, role, market, company. Takes two minutes. We never publish your email publicly.</p></div></div>
+          <div class="dir-step"><div class="step-num">2</div><div class="step-copy"><h4>We match by market and role</h4><p>Every Monday, we review new listings and identify compatible agent-LO pairs in the same market with complementary niches.</p></div></div>
+          <div class="dir-step"><div class="step-num">3</div><div class="step-copy"><h4>Warm email introduction</h4><p>We introduce you directly by email with context about why we think you're a fit. You take it from there.</p></div></div>
+          <div class="dir-step"><div class="step-num">4</div><div class="step-copy"><h4>Upgrade to Partnership Plan</h4><p>Once matched, both partners get co-branded templates and the full Partnership Plan feature set at the founding rate.</p></div></div>
         </div>
       </div>
-
-      <!-- TESTIMONIALS -->
-      <div style="display:flex; flex-direction:column; gap:1rem;">
-        <div style="background:var(--white); border:1px solid var(--gray-border); border-left:3px solid var(--gold); border-radius:0 4px 4px 0; padding:1.4rem;">
-          <p style="font-family:'Cormorant Garamond',serif; font-size:1rem; font-style:italic; color:var(--navy); margin-bottom:0.6rem; line-height:1.6;">"Having the templates ready on the first of the month changes everything. I've been trying to post consistently for two years."</p>
-          <div style="font-size:0.65rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--gray);">Residential Agent — Toronto, ON</div>
+      <div class="dir-form">
+        <div class="form-group"><label>Full Name</label><input type="text" id="dir-name" placeholder="Sarah Johnson"/></div>
+        <div class="form-group"><label>Email</label><input type="email" id="dir-email" placeholder="sarah@compass.com"/></div>
+        <div class="form-row">
+          <div class="form-group"><label>I am a</label><select id="dir-role" onchange="toggleDirLO()"><option value="agent">Agent</option><option value="lo">Loan Officer</option></select></div>
+          <div class="form-group"><label>Market</label><select id="dir-market"><option value="us">United States</option><option value="canada">Canada</option></select></div>
         </div>
-        <div style="background:var(--white); border:1px solid var(--gray-border); border-left:3px solid var(--gold); border-radius:0 4px 4px 0; padding:1.4rem;">
-          <p style="font-family:'Cormorant Garamond',serif; font-size:1rem; font-style:italic; color:var(--navy); margin-bottom:0.6rem; line-height:1.6;">"There is literally nothing like this for LOs. I sent it to six colleagues the day I signed up."</p>
-          <div style="font-size:0.65rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--gray);">Mortgage Broker — Dallas, TX</div>
-        </div>
+        <div class="form-group"><label>City / Metro</label><input type="text" id="dir-city" placeholder="Miami, FL"/></div>
+        <div class="form-group"><label>Company / Brokerage</label><input type="text" id="dir-company" placeholder="Compass Real Estate"/></div>
+        <div class="form-group dir-lo-field" id="dir-nmls-group" style="display:none;"><label>NMLS #</label><input type="text" id="dir-nmls" placeholder="123456"/></div>
+        <div class="form-group"><label>One sentence about your ideal partner (optional)</label><input type="text" id="dir-bio" placeholder="Looking for a purchase-focused LO who works with first-time buyers."/></div>
+        <button onclick="submitDirectory()" style="width:100%;background:var(--gold);color:white;border:none;padding:14px;border-radius:2px;font-size:14px;letter-spacing:0.06em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s;" id="dir-btn">List Me in the Directory</button>
+        <div id="dir-success" style="display:none;background:var(--parchment);border:1px solid var(--border);border-radius:3px;padding:20px;text-align:center;margin-top:16px;"><strong style="font-family:'Cormorant Garamond',serif;font-size:20px;display:block;margin-bottom:6px;">You're listed.</strong><span style="font-size:13px;color:var(--muted);">We'll reach out by email when we find a match in your market.</span></div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- PRICING -->
-<section class="cv-section" id="pricing" style="background:var(--off-white); border-top:1px solid var(--gray-border);">
-  <div style="max-width:1200px; margin:0 auto;">
-    <div class="cv-section-tag">Membership Plans</div>
-    <h2 class="cv-h2">Choose your plan.</h2>
-    <p class="cv-body" style="max-width:540px; margin-bottom:3rem;">All plans include a monthly content calendar, Canva-ready templates, and US + Canada market versions. Cancel anytime.</p>
-
-    <div class="cv-plans">
-      <!-- Agent -->
-      <div class="cv-plan">
-        <div class="cv-plan-body">
-          <div class="cv-plan-role">For Realtors</div>
-          <div class="cv-plan-name">Agent Plan</div>
-          <div><span class="cv-plan-was">$59</span><span class="cv-plan-price">$49</span><span class="cv-plan-period">/mo</span></div>
-          <div class="cv-plan-founding">↗ Founding rate — locked in for life</div>
-          <div class="cv-plan-divider"></div>
-          <ul class="cv-plan-features">
-            <li>20 social graphics — Instagram, Facebook, LinkedIn</li>
-            <li>20 captions with hashtags — US & Canada</li>
-            <li>4 Reels/TikTok video scripts</li>
-            <li>1 email newsletter template</li>
-            <li>2 Instagram story sequences</li>
-            <li>Monthly objection-handling script</li>
-            <li>Content calendar — what to post, when</li>
-          </ul>
-          <a href="https://buy.stripe.com/bJe5kE7Aagisc4VemU3VC01" class="btn-outline" style="width:100%; text-align:center;" target="_blank">Get Agent Plan →</a>
-        </div>
+<section id="founding">
+  <div class="container">
+    <div class="section-label">Founding Member Pricing</div>
+    <h2 class="section-title" style="color:var(--cream);">Lock your rate before launch.</h2>
+    <p class="section-sub">Founding rates are locked for life. Price increases when the public launch happens. These prices will not come back.</p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-name">Agent Plan</div>
+        <div class="price-amount">$49</div>
+        <div class="price-period">/month · founding rate (reg. $59)</div>
+        <div class="price-founding">↗ Lock in before price increases</div>
+        <ul class="price-list">
+          <li>12 agent templates per month</li>
+          <li>Monthly content calendar</li>
+          <li>Email sequence templates</li>
+          <li>Zapier/Make integration</li>
+          <li>Community access</li>
+          <li>Partner directory listing</li>
+        </ul>
+        <a href="https://buy.stripe.com/bJe5kE7Aagisc4VemU3VC01" class="price-cta outline">Get Agent Plan</a>
       </div>
-
-      <!-- Partnership FEATURED -->
-      <div class="cv-plan featured">
-        <div class="cv-plan-badge">Exclusive — Only Option Like This Anywhere</div>
-        <div class="cv-plan-body">
-          <div class="cv-plan-role">For Agent + LO Pairs</div>
-          <div class="cv-plan-name">Partnership Plan</div>
-          <div><span class="cv-plan-was">$89</span><span class="cv-plan-price">$69</span><span class="cv-plan-period">/mo</span></div>
-          <div class="cv-plan-founding">↗ Both agent & LO covered — one subscription</div>
-          <div class="cv-plan-divider"></div>
-          <ul class="cv-plan-features">
-            <li>Everything in Agent + LO plans</li>
-            <li>8 co-branded templates (both names/logos)</li>
-            <li>1 co-branded past-client nurture email</li>
-            <li>"Your Home Team" social intro series</li>
-            <li>RESPA/FINTRAC co-marketing compliance guide</li>
-            <li>Content designed for simultaneous joint posting</li>
-          </ul>
-          <a href="https://buy.stripe.com/4gM9AU3jU7LW3yp0w43VC03" class="btn-gold" style="width:100%; text-align:center;" target="_blank">Get Partnership Plan →</a>
-        </div>
+      <div class="price-card">
+        <div class="price-name">LO Plan</div>
+        <div class="price-amount">$49</div>
+        <div class="price-period">/month · founding rate (reg. $59)</div>
+        <div class="price-founding">↗ Lock in before price increases</div>
+        <ul class="price-list">
+          <li>12 LO templates per month</li>
+          <li>RESPA-compliant disclaimer blocks</li>
+          <li>NMLS, state license, EHL placeholders</li>
+          <li>Monthly content calendar</li>
+          <li>Zapier/Make integration</li>
+          <li>Community + partner directory</li>
+        </ul>
+        <a href="https://buy.stripe.com/6oU8wQ1bMfeoc4VfqY3VC02" class="price-cta outline">Get LO Plan</a>
       </div>
-
-      <!-- LO -->
-      <div class="cv-plan">
-        <div class="cv-plan-body">
-          <div class="cv-plan-role">For Loan Officers</div>
-          <div class="cv-plan-name">LO Plan</div>
-          <div><span class="cv-plan-was">$59</span><span class="cv-plan-price">$49</span><span class="cv-plan-period">/mo</span></div>
-          <div class="cv-plan-founding">↗ Founding rate — locked in for life</div>
-          <div class="cv-plan-divider"></div>
-          <ul class="cv-plan-features">
-            <li>20 graphics — rates, programs, buyer education</li>
-            <li>20 NMLS/FSRA-compliant captions — US & Canada</li>
-            <li>4 Reels/TikTok video scripts</li>
-            <li>1 email newsletter template (rate/market)</li>
-            <li>2 story sequences</li>
-            <li>Monthly co-marketing compliance explainer</li>
-            <li>Content calendar — what to post, when</li>
-          </ul>
-          <a href="https://buy.stripe.com/6oU8wQ1bMfeoc4VfqY3VC02" class="btn-outline" style="width:100%; text-align:center;" target="_blank">Get LO Plan →</a>
-        </div>
+      <div class="price-card featured">
+        <div class="price-name">Partnership Plan</div>
+        <div class="price-amount">$69</div>
+        <div class="price-period">/month · founding rate (reg. $89)</div>
+        <div class="price-founding">↗ Best value — covers both partners</div>
+        <ul class="price-list">
+          <li>Everything in Agent + LO plans</li>
+          <li>Co-Brand Builder access</li>
+          <li>Co-branded template set (both logos)</li>
+          <li>RESPA §8 co-marketing documentation</li>
+          <li>Partner matching priority</li>
+          <li>Full community access for both</li>
+        </ul>
+        <a href="https://buy.stripe.com/4gM9AU3jU7LW3yp0w43VC03" class="price-cta solid">Get Partnership Plan</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FOUNDING -->
-<div class="cv-founding" id="founding">
-  <div style="max-width:640px; margin:0 auto; position:relative; z-index:1;">
-    <div class="cv-section-tag" style="justify-content:center; color:var(--gold-light);">Limited — 50 Spots</div>
-    <h2 style="font-family:'Cormorant Garamond',serif; font-size:clamp(2rem,4vw,3rem); font-weight:600; color:var(--white); line-height:1.1; margin-bottom:0.8rem;">
-      Founding member.<br/>
-      <em style="font-style:italic; color:var(--gold);">Locked in forever.</em>
-    </h2>
-    <p style="font-size:0.88rem; color:rgba(255,255,255,0.55); max-width:480px; margin:0 auto 2.5rem; line-height:1.8;">Reserve your spot now. Founding rates are permanent — you never pay more than this as long as you stay subscribed. Payment link arrives within 24 hours.</p>
-
-    <div class="cv-founding-prices">
-      <div class="cv-founding-price">
-        <div class="cv-founding-was">$59/mo standard</div>
-        <div class="cv-founding-amount">$49</div>
-        <div class="cv-founding-tier">Agent Plan</div>
+<!-- SIGNUP -->
+<section class="signup-section" id="signup" style="padding:96px 40px;background:var(--cream);">
+  <div class="container">
+    <div class="section-label" style="text-align:center;">Free Starter Pack + Founding Access</div>
+    <h2 class="section-title" style="text-align:center;margin-bottom:8px;">Get 5 free templates. Then decide.</h2>
+    <p class="section-sub" style="text-align:center;margin:0 auto 48px;">No credit card. Your free pack includes 3 agent templates, 2 LO templates with RESPA fields pre-built, and the May content calendar.</p>
+    <div class="signup-wrap">
+      <div class="signup-form" id="signup-form">
+        <input type="text" id="s-name" placeholder="Full name"/>
+        <input type="email" id="s-email" placeholder="Email address"/>
+        <select id="s-role" onchange="handleRoleChange()">
+          <option value="">I am a...</option>
+          <option value="agent">Agent / Realtor</option>
+          <option value="lo">Loan Officer / Mortgage Broker</option>
+          <option value="partnership">Agent-LO Partnership (both of us)</option>
+        </select>
+        <input type="text" id="s-nmls" class="lo-field" placeholder="NMLS # (required for LO templates)" style="display:none;"/>
+        <input type="text" id="s-state" class="lo-field" placeholder="State license (e.g. FL, CA)" style="display:none;"/>
+        <select id="s-market">
+          <option value="us">United States</option>
+          <option value="canada">Canada</option>
+        </select>
+        <button onclick="submitSignup()" id="signup-btn">Get My Free Templates →</button>
+        <p class="form-note">No credit card required. Free templates delivered by email. Reply to the email to receive your Canva links.</p>
       </div>
-      <div class="cv-founding-price">
-        <div class="cv-founding-was">$89/mo standard</div>
-        <div class="cv-founding-amount">$69</div>
-        <div class="cv-founding-tier">Partnership Plan</div>
-      </div>
-      <div class="cv-founding-price">
-        <div class="cv-founding-was">$59/mo standard</div>
-        <div class="cv-founding-amount">$49</div>
-        <div class="cv-founding-tier">LO Plan</div>
-      </div>
-    </div>
-
-    <form id="foundingForm" style="text-align:left; max-width:460px; margin:0 auto;">
-      <input type="text" name="name" class="cv-input" placeholder="Your name" required style="background:rgba(255,255,255,0.07); border-color:rgba(255,255,255,0.12); color:var(--white);"/>
-      <input type="email" name="email" class="cv-input" placeholder="Your email address" required style="background:rgba(255,255,255,0.07); border-color:rgba(255,255,255,0.12); color:var(--white);"/>
-      <select name="role" class="cv-select" required style="background:rgba(255,255,255,0.07); border-color:rgba(255,255,255,0.12); color:var(--white);">
-        <option value="" disabled selected>Select your plan...</option>
-        <option value="agent">Real Estate Agent — Agent Plan ($49/mo founding)</option>
-        <option value="lo">Loan Officer — LO Plan ($49/mo founding)</option>
-        <option value="partnership">Agent + LO Pair — Partnership Plan ($69/mo founding)</option>
-      </select>
-      <select name="market" class="cv-select" required style="background:rgba(255,255,255,0.07); border-color:rgba(255,255,255,0.12); color:var(--white);">
-        <option value="" disabled selected>Your market...</option>
-        <option value="us">United States</option>
-        <option value="canada">Canada</option>
-      </select>
-      <button type="submit" class="btn-gold" id="foundingBtn" style="width:100%; margin-top:0.4rem;">Reserve My Founding Spot →</button>
-      <p style="font-size:0.65rem; color:rgba(255,255,255,0.3); text-align:center; margin-top:0.8rem; letter-spacing:0.04em;">Founding rate locks permanently. Payment link within 24 hours.</p>
-    </form>
-
-    <div id="foundingSuccess" style="display:none; text-align:center; padding:2rem 0;">
-      <div style="font-size:2.5rem; color:var(--gold); margin-bottom:0.8rem;">✓</div>
-      <div style="font-size:1rem; color:var(--white); margin-bottom:0.4rem;">Spot reserved.</div>
-      <div style="font-size:0.8rem; color:rgba(255,255,255,0.4);">Check your inbox — payment link and onboarding details arriving within 24 hours.</div>
-    </div>
-  </div>
-</div>
-
-<!-- FAQ -->
-<section class="cv-section" style="background:var(--white);">
-  <div style="max-width:1200px; margin:0 auto;">
-    <div class="cv-section-tag">Questions</div>
-    <h2 class="cv-h2" style="margin-bottom:2.5rem;">Common questions.</h2>
-    <div class="cv-faq" style="border:1px solid var(--gray-border); border-radius:4px; overflow:hidden;">
-      <div class="cv-faq-item">
-        <div class="cv-faq-q">What format are the templates?</div>
-        <div class="cv-faq-a">All graphics are Canva templates — click the link, duplicate to your account, swap in your name and colors. Takes under 2 minutes per post. No design experience required.</div>
-      </div>
-      <div class="cv-faq-item">
-        <div class="cv-faq-q">Do you cover US and Canadian markets?</div>
-        <div class="cv-faq-a">Yes. Every caption set and stat reference comes in US and Canadian versions. LO content is compliant with NMLS advertising rules (US) and FSRA guidelines (Canada).</div>
-      </div>
-      <div class="cv-faq-item">
-        <div class="cv-faq-q">How is the Partnership Plan different from two individual plans?</div>
-        <div class="cv-faq-a">The Partnership Plan includes everything in both individual plans PLUS 8 co-branded templates, a "Your Home Team" intro series, and RESPA/FINTRAC compliance guidance. Co-branded content is exclusive to this tier.</div>
-      </div>
-      <div class="cv-faq-item">
-        <div class="cv-faq-q">Is LO content compliance-safe?</div>
-        <div class="cv-faq-a">All LO content avoids misleading rate claims and includes required disclosure fields. Co-marketing templates include RESPA cost-sharing guidance. Your compliance officer should still do a final review.</div>
-      </div>
-      <div class="cv-faq-item">
-        <div class="cv-faq-q">When does content drop each month?</div>
-        <div class="cv-faq-a">The 1st of every month. You receive an email with your content calendar and all template links. Your first batch arrives within 24 hours of your subscription being confirmed.</div>
-      </div>
-      <div class="cv-faq-item">
-        <div class="cv-faq-q">Can I cancel anytime?</div>
-        <div class="cv-faq-a">Yes. No contracts, no cancellation fees. Founding member pricing is locked for life as long as you remain subscribed — if you cancel and resubscribe, standard pricing applies.</div>
+      <div class="success-msg" id="signup-success">
+        <h4>You're in.</h4>
+        <p>Check your email for your free starter pack. Your Canva template links will arrive within a few minutes.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
-  <div class="footer-logo">Content<span>Vault</span></div>
-  <div class="footer-note">Built for realtors and loan officers across the US and Canada.</div>
+  <strong>ContentVault</strong> — Done-for-you content for realtors and loan officers.<br/>
+  <span style="font-size:11px;margin-top:8px;display:block;">All LO and partnership templates include RESPA §8 co-marketing disclosure, NMLS placeholders, and Equal Housing Lender language. Review with your compliance officer before publishing.</span>
 </footer>
 
-<div class="cv-toast" id="toast"></div>
-
 <script>
-  const SUPABASE_URL = 'https://mxyepucitjzleaziizkr.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14eWVwdWNpdGp6bGVhemlpemtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0Njk1ODIsImV4cCI6MjA5MDA0NTU4Mn0.oQr_hO5fVkOhGcJ2u3mqQDJIfw9cAdXwfVAAXOf96q4';
+const EDGE = 'https://mxyepucitjzleaziizkr.supabase.co/functions/v1/cv-mailer-v5';
 
-  function showToast(msg, duration) {
-    duration = duration || 4000;
-    var t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(function() { t.classList.remove('show'); }, duration);
-  }
+function handleRoleChange(){
+  const role = document.getElementById('s-role').value;
+  const loFields = document.querySelectorAll('#signup-form .lo-field');
+  loFields.forEach(f => f.style.display = (role==='lo'||role==='partnership') ? 'block' : 'none');
+}
 
-  async function sendViaEdge(name, email, role, isLeadMagnet) {
-    try {
-      await fetch('https://mxyepucitjzleaziizkr.supabase.co/functions/v1/cv-mailer-v3', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
-        body: JSON.stringify({ name: name || null, email: email, role: role || null, is_lead_magnet: isLeadMagnet })
-      });
-    } catch(e) { console.warn('Mailer error:', e); }
-  }
+async function submitSignup(){
+  const btn = document.getElementById('signup-btn');
+  const name = document.getElementById('s-name').value.trim();
+  const email = document.getElementById('s-email').value.trim();
+  const role = document.getElementById('s-role').value;
+  const nmls = document.getElementById('s-nmls').value.trim();
+  const state = document.getElementById('s-state').value.trim();
+  const market = document.getElementById('s-market').value;
+  if(!email||!role){alert('Please enter your email and select your role.');return;}
+  btn.disabled=true;btn.textContent='Sending...';
+  try{
+    await fetch(EDGE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,role,market,nmls_number:nmls||null,state_license:state||null,is_lead_magnet:true})});
+    document.getElementById('signup-form').style.display='none';
+    document.getElementById('signup-success').style.display='block';
+  }catch(e){btn.disabled=false;btn.textContent='Get My Free Templates →';alert('Something went wrong. Please try again.');}
+}
 
-  async function submitSignup(name, email, role, market, isLeadMagnet) {
-    var dbRes = await fetch(SUPABASE_URL + '/rest/v1/contentvault_signups', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ name: name || null, email: email, role: role || null, market: market || null, lead_magnet: isLeadMagnet })
-    });
-    var isDuplicate = dbRes.status === 409;
-    if (!dbRes.ok && !isDuplicate) throw new Error(await dbRes.text());
-    if (!isDuplicate) await sendViaEdge(name, email, role, isLeadMagnet);
-    if (isDuplicate) throw new Error('duplicate');
-  }
+async function submitDirectory(){
+  const btn = document.getElementById('dir-btn');
+  const name = document.getElementById('dir-name').value.trim();
+  const email = document.getElementById('dir-email').value.trim();
+  const role = document.getElementById('dir-role').value;
+  const market = document.getElementById('dir-market').value;
+  const city = document.getElementById('dir-city').value.trim();
+  const company = document.getElementById('dir-company').value.trim();
+  const nmls = document.getElementById('dir-nmls').value.trim();
+  const bio = document.getElementById('dir-bio').value.trim();
+  if(!email||!role||!market){alert('Please fill in your email, role, and market.');return;}
+  btn.disabled=true;btn.textContent='Submitting...';
+  try{
+    await fetch(EDGE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'partner-register',name,email,role,market,city,company_name:company,nmls_number:nmls||null,bio})});
+    document.getElementById('dir-success').style.display='block';
+    btn.style.display='none';
+  }catch(e){btn.disabled=false;btn.textContent='List Me in the Directory';alert('Something went wrong. Please try again.');}
+}
 
-  document.getElementById('leadForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    var btn = document.getElementById('leadBtn');
-    var name = e.target.name.value.trim();
-    var email = e.target.email.value.trim();
-    btn.disabled = true; btn.textContent = 'Sending...';
-    try {
-      await submitSignup(name, email, null, null, true);
-      document.getElementById('leadForm').style.display = 'none';
-      document.getElementById('leadSuccess').style.display = 'block';
-    } catch(err) {
-      if (err.message.indexOf('duplicate') > -1 || err.message.indexOf('unique') > -1) {
-        showToast("You're already on the list — check your inbox!");
-        document.getElementById('leadForm').style.display = 'none';
-        document.getElementById('leadSuccess').style.display = 'block';
-      } else { showToast('Something went wrong. Please try again.'); btn.disabled = false; btn.textContent = 'Send Me The Free Templates →'; }
-    }
-  });
+function updatePreview(){
+  const aName = document.getElementById('a-name').value||'Sarah Johnson';
+  const bName = document.getElementById('b-name').value||'Mike Torres';
+  const aCompany = document.getElementById('a-company').value||'Compass Real Estate';
+  const bCompany = document.getElementById('b-company').value||'Coastal Lending Group';
+  const market = document.getElementById('market').value||'Miami, FL';
+  const bNmls = document.getElementById('b-nmls').value||'789012';
+  const bState = document.getElementById('b-state').value||'FL';
+  const aInit = aName.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
+  const bInit = bName.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
+  document.getElementById('prev-a-avatar').textContent=aInit;
+  document.getElementById('prev-b-avatar').textContent=bInit;
+  document.getElementById('prev-names').textContent=aName+' × '+bName;
+  document.getElementById('prev-market').textContent=market;
+  document.getElementById('prev-a-line').textContent=aName;
+  document.getElementById('prev-b-line').textContent=bName;
+  document.getElementById('prev-footer').innerHTML='<strong>'+aName+'</strong> · '+aCompany+'<br/><strong>'+bName+'</strong> · '+bCompany+'<br/><span id="prev-nmls">NMLS #'+bNmls+' | Licensed in '+bState+' | Equal Housing Lender</span><br/><em style="font-size:9px">Per RESPA §8: No referral fee or thing of value exchanged for any referral of settlement service business.</em>';
+}
 
-  document.getElementById('foundingForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    var btn = document.getElementById('foundingBtn');
-    var name = e.target.name.value.trim();
-    var email = e.target.email.value.trim();
-    var role = e.target.role.value;
-    var market = e.target.market.value;
-    btn.disabled = true; btn.textContent = 'Reserving your spot...';
-    try {
-      await submitSignup(name, email, role, market, false);
-      document.getElementById('foundingForm').style.display = 'none';
-      document.getElementById('foundingSuccess').style.display = 'block';
-    } catch(err) {
-      if (err.message.indexOf('duplicate') > -1 || err.message.indexOf('unique') > -1) {
-        showToast("You're already registered — payment link arriving within 24 hours.");
-        document.getElementById('foundingForm').style.display = 'none';
-        document.getElementById('foundingSuccess').style.display = 'block';
-      } else { showToast('Something went wrong. Please try again.'); btn.disabled = false; btn.textContent = 'Reserve My Founding Spot →'; }
-    }
-  });
+function toggleLOFields(){
+  const bRole = document.getElementById('b-role').value;
+  document.getElementById('b-nmls-group').style.display = bRole==='lo'?'flex':'none';
+  document.getElementById('b-state-group').style.display = bRole==='lo'?'flex':'none';
+}
+
+function toggleDirLO(){
+  const role = document.getElementById('dir-role').value;
+  document.getElementById('dir-nmls-group').style.display = role==='lo'?'flex':'none';
+}
 </script>
+
 </body>
 </html>
