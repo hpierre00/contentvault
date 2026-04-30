@@ -367,6 +367,8 @@ footer strong{color:var(--cream);}
           </div>
         </div>
         <p style="font-size:12px;color:var(--muted);margin-top:16px;line-height:1.6;">This preview reflects your co-branded info block. Copy it into any Canva template with one paste. Members on the Partnership Plan get all 12 monthly templates pre-populated via the Co-Brand Builder.</p>
+        <button onclick="copyCoband()" id="cobrand-copy-btn" style="margin-top:16px;width:100%;background:var(--gold);color:white;border:none;padding:12px;border-radius:2px;font-size:13px;letter-spacing:0.06em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s;">Copy Co-Brand Block →</button>
+        <div id="cobrand-copied" style="display:none;text-align:center;font-size:12px;color:var(--gold);margin-top:8px;letter-spacing:0.06em;">✓ Copied to clipboard — paste into Canva</div>
       </div>
     </div>
   </div>
@@ -597,14 +599,35 @@ function updatePreview(){
 }
 
 function toggleLOFields(){
+  const aRole = document.getElementById('a-role').value;
   const bRole = document.getElementById('b-role').value;
+  document.getElementById('a-nmls-group').style.display = aRole==='lo'?'flex':'none';
+  document.getElementById('a-state-group').style.display = aRole==='lo'?'flex':'none';
   document.getElementById('b-nmls-group').style.display = bRole==='lo'?'flex':'none';
   document.getElementById('b-state-group').style.display = bRole==='lo'?'flex':'none';
 }
+// Set correct initial state on load
+document.addEventListener('DOMContentLoaded', toggleLOFields);
 
 function toggleDirLO(){
   const role = document.getElementById('dir-role').value;
   document.getElementById('dir-nmls-group').style.display = role==='lo'?'flex':'none';
+}
+
+function copyCoband(){
+  const aName = document.getElementById('a-name').value||'Sarah Johnson';
+  const bName = document.getElementById('b-name').value||'Mike Torres';
+  const aCompany = document.getElementById('a-company').value||'Compass Real Estate';
+  const bCompany = document.getElementById('b-company').value||'Coastal Lending Group';
+  const bNmls = document.getElementById('b-nmls').value||'[NMLS#]';
+  const bState = document.getElementById('b-state').value||'[STATE]';
+  const market = document.getElementById('market').value||'';
+  const text = aName+' · '+aCompany+'\n'+bName+' · '+bCompany+(market?'\n'+market:'')+' \nNMLS #'+bNmls+' | Licensed in '+bState+' | Equal Housing Lender\nPer RESPA §8: No referral fee or thing of value exchanged for any referral of settlement service business.';
+  navigator.clipboard.writeText(text).then(()=>{
+    document.getElementById('cobrand-copied').style.display='block';
+    document.getElementById('cobrand-copy-btn').textContent='Copied';
+    setTimeout(()=>{document.getElementById('cobrand-copied').style.display='none';document.getElementById('cobrand-copy-btn').textContent='Copy Co-Brand Block';},3000);
+  }).catch(()=>alert(text));
 }
 </script>
 
