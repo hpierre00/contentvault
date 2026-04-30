@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ContentVault — Launch Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--ink:#0F0B07;--cream:#F7F2E8;--parch:#EDE5D4;--gold:#B5793A;--gold2:#D4964D;--blue:#1C3F6E;--blue2:#2C5F8A;--muted:#7A6E61;--border:#D4C9B0;--green:#2A7A4B;--red:#8B2020;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0F0B07;color:#E8E0D0;font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;}
+header{border-bottom:1px solid rgba(255,255,255,0.08);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;}.logo span{color:var(--gold);}
+.header-sub{font-size:11px;color:rgba(232,224,208,0.35);letter-spacing:0.1em;text-transform:uppercase;}
+.tabs{display:flex;border-bottom:1px solid rgba(255,255,255,0.08);padding:0 32px;}
+.tab{padding:14px 24px;font-size:13px;cursor:pointer;color:rgba(232,224,208,0.4);border-bottom:2px solid transparent;transition:all 0.2s;letter-spacing:0.04em;}
+.tab.active{color:#E8E0D0;border-bottom-color:var(--gold);}
+main{padding:32px;}
+.tab-content{display:none;}.tab-content.active{display:block;}
+
+/* STATS */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+.stat{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:20px 24px;}
+.stat-val{font-size:32px;font-weight:500;color:var(--gold);font-family:'DM Mono',monospace;margin-bottom:4px;}
+.stat-label{font-size:11px;color:rgba(232,224,208,0.4);letter-spacing:0.08em;text-transform:uppercase;}
+
+/* PANELS */
+.panel{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;margin-bottom:24px;}
+.panel-header{padding:16px 24px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(232,224,208,0.5);}
+.panel-body{padding:24px;}
+
+/* SCRIPT CARDS */
+.script-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;}
+.script-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:20px;}
+.script-label{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.script-title{font-size:15px;font-weight:500;margin-bottom:12px;}
+.script-body{font-size:13px;line-height:1.75;color:rgba(232,224,208,0.8);background:rgba(0,0,0,0.2);border-radius:3px;padding:14px;margin-bottom:12px;white-space:pre-wrap;font-family:'DM Mono',monospace;font-size:12px;}
+.script-note{font-size:11px;color:rgba(232,224,208,0.35);line-height:1.6;margin-bottom:12px;}
+.copy-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(232,224,208,0.7);padding:7px 16px;border-radius:2px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:0.06em;transition:all 0.2s;width:100%;}
+.copy-btn:hover{border-color:var(--gold);color:var(--gold);}
+.copy-btn.copied{border-color:#5BB880;color:#5BB880;}
+
+/* CALENDAR */
+.cal-week{margin-bottom:24px;}
+.week-header{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.day-row{display:grid;grid-template-columns:80px 1fr 1fr 1fr;gap:12px;margin-bottom:8px;align-items:start;}
+.day-label{font-size:12px;color:rgba(232,224,208,0.4);padding-top:10px;font-family:'DM Mono',monospace;}
+.day-item{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:3px;padding:10px 12px;}
+.day-item.gold-border{border-color:rgba(181,121,58,0.3);}
+.day-item.blue-border{border-color:rgba(28,63,110,0.4);}
+.day-item.green-border{border-color:rgba(42,122,75,0.3);}
+.item-channel{font-size:10px;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;}
+.item-channel.instagram{color:var(--gold);}
+.item-channel.outreach{color:#6B9FD4;}
+.item-channel.linkedin{color:#5BB880;}
+.item-task{font-size:12px;line-height:1.5;color:rgba(232,224,208,0.8);}
+.check-box{width:16px;height:16px;border:1px solid rgba(255,255,255,0.2);border-radius:2px;cursor:pointer;display:inline-block;margin-right:6px;vertical-align:middle;transition:all 0.2s;flex-shrink:0;}
+.check-box.done{background:var(--green);border-color:var(--green);}
+
+/* TRACKER */
+.tracker-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.tracker-num{font-family:'DM Mono',monospace;font-size:22px;color:rgba(232,224,208,0.2);width:48px;flex-shrink:0;text-align:center;}
+.tracker-num.active{color:var(--gold);}
+.tracker-num.done-num{color:#5BB880;}
+.tracker-info{flex:1;}
+.tracker-name{font-size:14px;font-weight:500;margin-bottom:2px;}
+.tracker-detail{font-size:12px;color:rgba(232,224,208,0.4);}
+.tracker-status{font-size:11px;padding:4px 10px;border-radius:2px;white-space:nowrap;}
+.status-target{background:rgba(181,121,58,0.15);color:var(--gold);border:1px solid rgba(181,121,58,0.25);}
+.status-done{background:rgba(42,122,75,0.15);color:#5BB880;border:1px solid rgba(42,122,75,0.25);}
+.status-open{background:rgba(255,255,255,0.04);color:rgba(232,224,208,0.4);border:1px solid rgba(255,255,255,0.08);}
+
+/* CHANNELS */
+.channel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+.channel-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:20px;}
+.channel-icon{font-size:24px;margin-bottom:12px;}
+.channel-name{font-size:14px;font-weight:500;margin-bottom:6px;}
+.channel-desc{font-size:12px;color:rgba(232,224,208,0.5);line-height:1.6;margin-bottom:12px;}
+.channel-metric{font-size:11px;color:var(--gold);letter-spacing:0.04em;}
+
+/* PROGRESS */
+.progress-outer{height:4px;background:rgba(255,255,255,0.06);border-radius:2px;margin-top:6px;}
+.progress-inner{height:4px;border-radius:2px;background:var(--gold);transition:width 0.3s;}
+</style>
+</head>
+<body>
+<header>
+  <div><div class="logo">Content<span>Vault</span></div><div class="header-sub">Launch Command Center</div></div>
+  <div style="font-size:12px;color:rgba(232,224,208,0.3);font-family:'DM Mono',monospace;">Goal: 10 paying members</div>
+</header>
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('tracker')">Member Tracker</div>
+  <div class="tab" onclick="switchTab('outreach')">Outreach Scripts</div>
+  <div class="tab" onclick="switchTab('calendar')">30-Day Calendar</div>
+  <div class="tab" onclick="switchTab('channels')">Channel Strategy</div>
+</div>
+<main>
+
+<!-- MEMBER TRACKER -->
+<div class="tab-content active" id="tab-tracker">
+  <div class="stat-row">
+    <div class="stat"><div class="stat-val" id="t-closed">0</div><div class="stat-label">Paying Members</div></div>
+    <div class="stat"><div class="stat-val" id="t-pipeline">0</div><div class="stat-label">In Pipeline</div></div>
+    <div class="stat"><div class="stat-val" id="t-contacted">0</div><div class="stat-label">Contacted</div></div>
+    <div class="stat"><div class="stat-val" id="t-mrr" style="color:#5BB880">$0</div><div class="stat-label">MRR</div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">First 10 Members — Pipeline</div>
+      <button class="copy-btn" style="width:auto;padding:6px 16px" onclick="addProspect()">+ Add Prospect</button>
+    </div>
+    <div class="panel-body">
+      <div id="prospect-list"></div>
+      <div id="add-form" style="display:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:16px;margin-top:16px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end;">
+          <div><div style="font-size:10px;letter-spacing:.1em;color:rgba(232,224,208,0.4);margin-bottom:6px">NAME</div><input id="p-name" type="text" placeholder="Sarah Johnson" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:2px;padding:8px 10px;font-size:13px;color:#E8E0D0;font-family:'DM Sans',sans-serif;outline:none"/></div>
+          <div><div style="font-size:10px;letter-spacing:.1em;color:rgba(232,224,208,0.4);margin-bottom:6px">ROLE</div><select id="p-role" style="width:100%;background:#1a140c;border:1px solid rgba(255,255,255,0.1);border-radius:2px;padding:8px 10px;font-size:13px;color:#E8E0D0;font-family:'DM Sans',sans-serif;outline:none"><option value="agent">Agent</option><option value="lo">Loan Officer</option><option value="partnership">Partnership</option></select></div>
+          <div><div style="font-size:10px;letter-spacing:.1em;color:rgba(232,224,208,0.4);margin-bottom:6px">STATUS</div><select id="p-status" style="width:100%;background:#1a140c;border:1px solid rgba(255,255,255,0.1);border-radius:2px;padding:8px 10px;font-size:13px;color:#E8E0D0;font-family:'DM Sans',sans-serif;outline:none"><option value="contacted">Contacted</option><option value="interested">Interested</option><option value="trialing">Free Trial</option><option value="closed">Paying Member</option></select></div>
+          <button onclick="saveProspect()" style="background:var(--gold);color:white;border:none;padding:9px 20px;border-radius:2px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">Save</button>
+        </div>
+        <div style="margin-top:12px"><div style="font-size:10px;letter-spacing:.1em;color:rgba(232,224,208,0.4);margin-bottom:6px">NOTES</div><input id="p-notes" type="text" placeholder="How you know them, where you found them..." style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:2px;padding:8px 10px;font-size:13px;color:#E8E0D0;font-family:'DM Sans',sans-serif;outline:none"/></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OUTREACH SCRIPTS -->
+<div class="tab-content" id="tab-outreach">
+  <div style="margin-bottom:24px;padding:16px 20px;background:rgba(181,121,58,0.08);border:1px solid rgba(181,121,58,0.2);border-radius:4px;">
+    <p style="font-size:13px;line-height:1.7;color:rgba(232,224,208,0.8)"><strong style="color:var(--gold)">Sequencing:</strong> Start with warm outreach (people you know). Send 5-10 per day. Do not blast — personalize the [NAME] and [MARKET] fields. After warm list is exhausted, move to cold Instagram DMs targeting agents with 500-5K followers who post sporadically.</p>
+  </div>
+  <div class="script-grid" id="scripts-container"></div>
+</div>
+
+<!-- 30-DAY CALENDAR -->
+<div class="tab-content" id="tab-calendar">
+  <div style="margin-bottom:20px;display:flex;gap:20px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:10px;height:10px;border-radius:50%;background:var(--gold);display:inline-block"></span>Instagram Post</div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:10px;height:10px;border-radius:50%;background:#6B9FD4;display:inline-block"></span>Direct Outreach</div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:10px;height:10px;border-radius:50%;background:#5BB880;display:inline-block"></span>LinkedIn</div>
+  </div>
+  <div id="calendar-container"></div>
+</div>
+
+<!-- CHANNEL STRATEGY -->
+<div class="tab-content" id="tab-channels">
+  <div class="channel-grid">
+    <div class="channel-card">
+      <div class="channel-icon">📱</div>
+      <div class="channel-name">Instagram DMs</div>
+      <div class="channel-desc">Highest conversion for this audience. Agents and LOs live on Instagram. Warm DMs to known contacts first, then cold outreach to agents posting 1-2x/week with under 5K followers — they feel the content pain acutely.</div>
+      <div class="channel-metric">Target: 10 DMs/day · 20% response rate · 10% close rate</div>
+      <div class="progress-outer"><div class="progress-inner" style="width:0%" id="ig-progress"></div></div>
+    </div>
+    <div class="channel-card">
+      <div class="channel-icon">💼</div>
+      <div class="channel-name">LinkedIn</div>
+      <div class="channel-desc">LOs and mortgage brokers are more active on LinkedIn than agents. Post the RESPA compliance angle — it has no competition in this space and is genuinely alarming to LOs who have not thought about it.</div>
+      <div class="channel-metric">Target: 3 posts/week · 1 direct message per post engager</div>
+      <div class="progress-outer"><div class="progress-inner" style="width:0%" id="li-progress"></div></div>
+    </div>
+    <div class="channel-card">
+      <div class="channel-icon">✉️</div>
+      <div class="channel-name">Email Cold Outreach</div>
+      <div class="channel-desc">Pull agent emails from Zillow, Realtor.com, and local brokerage websites. LO emails from NMLS public registry. Subject line: "Free content templates for [MARKET] agents" converts well. 200 emails = 2-4 signups typically.</div>
+      <div class="channel-metric">Target: 50 emails/day · 3% signup rate · 10% paid conversion</div>
+      <div class="progress-outer"><div class="progress-inner" style="width:0%" id="em-progress"></div></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title">Where to Find Prospects</div></div>
+    <div class="panel-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div>
+          <div style="font-size:12px;color:var(--gold);letter-spacing:0.08em;margin-bottom:12px">FINDING AGENTS</div>
+          <div style="font-size:13px;line-height:1.9;color:rgba(232,224,208,0.8)">
+            → Instagram: Search #[yourcity]realtor, #[yourcity]realestate. Filter for 500-10K followers. Look for sporadic posting (1-2x/week) — they need you.<br/>
+            → Zillow: Search your market, click agents, most have public emails<br/>
+            → Local Facebook groups: "Real Estate Agents [City]"<br/>
+            → Your personal network: every agent you have ever worked with<br/>
+            → Your past clients who became agents
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--blue2);letter-spacing:0.08em;margin-bottom:12px">FINDING LOAN OFFICERS</div>
+          <div style="font-size:13px;line-height:1.9;color:rgba(232,224,208,0.8)">
+            → NMLS Consumer Access (nmlsconsumeraccess.org): public registry with names and companies<br/>
+            → LinkedIn: Search "Loan Officer [City]" — most have public profiles<br/>
+            → Instagram: #[city]loanofficer, #mortgagebroker[city]<br/>
+            → Local mortgage broker associations<br/>
+            → Referral partners from your real estate career
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title">The Founding Member Pitch — One Paragraph</div></div>
+    <div class="panel-body">
+      <div style="font-size:14px;line-height:1.8;color:rgba(232,224,208,0.9);font-family:'Cormorant Garamond',serif;font-size:18px;background:rgba(255,255,255,0.03);padding:20px;border-radius:3px;border-left:3px solid var(--gold)">
+        "I built a content membership specifically for agents and loan officers — done-for-you Instagram posts, email sequences, and co-branded templates for agent-LO pairs. The AI generates your monthly content pack in about 2 minutes. Every LO template has RESPA compliance language pre-built. I'm offering founding member pricing to the first group before the public launch — $49/month locked for life. Want me to send you the free starter pack?"
+      </div>
+      <p style="font-size:12px;color:rgba(232,224,208,0.4);margin-top:12px">Use this verbally, in DMs, on calls. Shorten it for Instagram DMs. Expand it for email. The RESPA line stops LOs cold every time.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// TABS
+const TAB_NAMES = ['tracker','outreach','calendar','channels'];
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', TAB_NAMES[i]===name));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='outreach') renderScripts();
+  if(name==='calendar') renderCalendar();
+}
+
+// PROSPECT TRACKER
+let prospects = JSON.parse(sessionStorage.getItem('cv_prospects')||'[]');
+function saveStorage() { sessionStorage.setItem('cv_prospects', JSON.stringify(prospects)); }
+function addProspect() { document.getElementById('add-form').style.display = document.getElementById('add-form').style.display==='none'?'block':'none'; }
+function saveProspect() {
+  const name = document.getElementById('p-name').value.trim();
+  if (!name) return;
+  prospects.push({ id: Date.now(), name, role: document.getElementById('p-role').value, status: document.getElementById('p-status').value, notes: document.getElementById('p-notes').value.trim(), date: new Date().toLocaleDateString() });
+  saveStorage(); renderProspects();
+  document.getElementById('p-name').value=''; document.getElementById('p-notes').value='';
+  document.getElementById('add-form').style.display='none';
+}
+function updateStatus(id, status) {
+  prospects = prospects.map(p => p.id===id ? {...p, status} : p);
+  saveStorage(); renderProspects();
+}
+function removeProspect(id) {
+  prospects = prospects.filter(p => p.id!==id);
+  saveStorage(); renderProspects();
+}
+const PRICE = {agent:49,lo:49,partnership:69};
+const STATUS_COLORS = {contacted:'rgba(232,224,208,0.3)',interested:'#D4964D',trialing:'#6B9FD4',closed:'#5BB880'};
+const STATUS_LABELS = {contacted:'Contacted',interested:'Interested',trialing:'Free Trial',closed:'Paying Member'};
+function renderProspects() {
+  const closed = prospects.filter(p=>p.status==='closed').length;
+  const pipeline = prospects.filter(p=>p.status==='interested'||p.status==='trialing').length;
+  const contacted = prospects.filter(p=>p.status==='contacted').length;
+  const mrr = prospects.filter(p=>p.status==='closed').reduce((s,p)=>s+(PRICE[p.role]||49),0);
+  document.getElementById('t-closed').textContent = closed;
+  document.getElementById('t-pipeline').textContent = pipeline;
+  document.getElementById('t-contacted').textContent = contacted;
+  document.getElementById('t-mrr').textContent = '$'+mrr;
+  const list = document.getElementById('prospect-list');
+  if (!prospects.length) { list.innerHTML = '<div style="text-align:center;padding:32px;color:rgba(232,224,208,0.2);font-size:13px">No prospects yet. Add the first one above.</div>'; return; }
+  list.innerHTML = prospects.map(p => `
+    <div class="tracker-row">
+      <div class="tracker-num ${p.status==='closed'?'done-num':p.status==='interested'||p.status==='trialing'?'active':''}">${prospects.indexOf(p)+1}</div>
+      <div class="tracker-info">
+        <div class="tracker-name">${p.name}</div>
+        <div class="tracker-detail">${p.role.toUpperCase()} · ${p.notes||'No notes'} · Added ${p.date}</div>
+      </div>
+      <select onchange="updateStatus(${p.id},this.value)" style="background:#1a140c;border:1px solid rgba(255,255,255,0.1);border-radius:2px;padding:6px 10px;font-size:12px;color:${STATUS_COLORS[p.status]};font-family:'DM Sans',sans-serif;outline:none;margin-right:8px">
+        ${Object.entries(STATUS_LABELS).map(([v,l])=>`<option value="${v}" ${p.status===v?'selected':''}>${l}</option>`).join('')}
+      </select>
+      <button onclick="removeProspect(${p.id})" style="background:rgba(139,32,32,0.2);border:1px solid rgba(139,32,32,0.3);color:rgba(232,224,208,0.5);padding:6px 10px;border-radius:2px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">✕</button>
+    </div>`).join('');
+}
+renderProspects();
+
+// OUTREACH SCRIPTS
+const SCRIPTS = [
+  {
+    label: 'Warm DM — Agent (Instagram)',
+    title: 'To agents you know personally',
+    body: `Hey [NAME] 👋
+
+Quick question — are you posting consistently on Instagram right now?
+
+I built something that might save you a ton of time. It's a content membership for agents — done-for-you posts, captions, hashtags, and a monthly calendar that tells you exactly what to post and when.
+
+I'm giving founding member pricing to people I know before the public launch. It's $49/month, locked for life.
+
+Want me to send you the free starter pack? No credit card, just 5 templates you can customize in Canva in under 2 minutes.`,
+    note: 'Best for people you have a real relationship with. Personalize the opener if you know something specific about their business.'
+  },
+  {
+    label: 'Warm DM — Loan Officer (Instagram)',
+    title: 'To LOs you know personally',
+    body: `Hey [NAME] — hope things are going well.
+
+Random question: are you doing any co-marketing content with your referral partners right now?
+
+I built a content membership specifically for loan officers — done-for-you posts with RESPA-compliant language pre-built in every template. Every co-branded template has the Section 8 disclosure included so it's ready for your compliance officer to review.
+
+Founding member pricing is $49/month, locked in before the public launch.
+
+Want the free starter pack?`,
+    note: 'The RESPA angle is the hook for LOs. Many do not realize their co-branded content is non-compliant. This line gets responses.'
+  },
+  {
+    label: 'Cold DM — Agent (Instagram)',
+    title: 'To agents you find via hashtags',
+    body: `Hey [NAME] — love your content. Quick question, do you have a system for your monthly posting schedule or are you doing it all from scratch each week?
+
+I built a tool that might be worth 2 minutes of your time.`,
+    note: 'Keep cold DMs SHORT. This is the opener only. If they respond, send the full pitch. Never lead with a product link on a cold DM.'
+  },
+  {
+    label: 'Cold DM Follow-up',
+    title: 'After they respond to the opener',
+    body: `Nice — yeah I know that feeling. I built ContentVault for exactly that.
+
+It's a monthly membership: 12 done-for-you posts with captions, hooks, and hashtags, a content calendar that tells you what to post and when, and an AI generator that customizes everything for your market.
+
+I'm doing founding member pricing right now — $49/month, locked for life before the public launch.
+
+I can send you a free 5-template starter pack with no strings attached if you want to see the quality first.`,
+    note: 'Only send this after they engage with the opener. The free pack offer at the end lowers the resistance to saying yes.'
+  },
+  {
+    label: 'Email Cold Outreach — Agent',
+    title: 'For agents found via Zillow / brokerage sites',
+    body: `Subject: Free content templates for [MARKET] agents
+
+Hi [NAME],
+
+I'm a [real estate professional / mortgage pro] who built a content system specifically for agents in markets like [MARKET].
+
+ContentVault delivers 12 done-for-you social media posts per month — captions, hooks, hashtags, and a posting calendar. Everything is customizable in Canva in under 2 minutes.
+
+I'm giving away a free 5-template starter pack to agents in [MARKET] before the public launch. No credit card required.
+
+Here is the link: contentvault.netlify.app
+
+Would it be useful?
+
+[YOUR NAME]`,
+    note: 'Keep email cold outreach under 100 words. Subject line with the market name gets 2-3x higher open rates. Send from your real email, not a bulk tool.'
+  },
+  {
+    label: 'Email Cold Outreach — Loan Officer',
+    title: 'For LOs found via NMLS registry / LinkedIn',
+    body: `Subject: RESPA-compliant co-marketing templates for loan officers
+
+Hi [NAME],
+
+Quick question — are you doing co-branded content with your referral agent partners right now?
+
+I built ContentVault specifically for loan officers. Every template includes NMLS number, state license, Equal Housing Lender, and RESPA Section 8 disclosure placeholders — ready for your compliance officer to review before posting.
+
+Free 5-template starter pack available now before our public launch.
+
+contentvault.netlify.app
+
+Worth a look?
+
+[YOUR NAME]`,
+    note: 'The RESPA subject line works. LOs who have co-marketed without disclosures will open this. Those who have avoided co-marketing will open it too.'
+  },
+  {
+    label: 'LinkedIn Post — RESPA Angle',
+    title: 'Post this on your LinkedIn profile',
+    body: `Most loan officers doing co-branded content with referral partners are unknowingly creating a RESPA compliance issue.
+
+Under Section 8 of RESPA, both parties in a co-marketing arrangement must pay fair market value for shared materials. If your agent partner is just giving you free marketing — or you're giving them free content — that is a thing of value, which RESPA restricts.
+
+The fix is straightforward: document the cost-sharing and include the §8 disclosure in every co-branded piece.
+
+I built a content membership that has this pre-built into every LO and partnership template. Every co-branded post comes with the disclosure included, ready for compliance review.
+
+If you're co-marketing right now, worth a look: contentvault.netlify.app
+
+#loanofficer #mortgagebroker #RESPA #realestate #mortgage`,
+    note: 'Post this on LinkedIn and reply to every comment. This post educates and terrifies simultaneously — both are good for conversion.'
+  },
+  {
+    label: 'LinkedIn Post — Agent Value Prop',
+    title: 'For agents on LinkedIn',
+    body: `The agents I see doing the best on Instagram right now have one thing in common: they post consistently with a loan officer.
+
+Not because the content is better. Because their reach doubles.
+
+Every post they put out, their LO reposts with rate context. Every co-branded piece gets engagement from two audiences. The referral loop stays warm without a single coffee meeting.
+
+I built a content membership that gives both sides the same monthly content system — agent posts, LO posts, and co-branded templates that both can use. The AI generates the full month in about 2 minutes.
+
+Founding member pricing ends when we hit capacity: contentvault.netlify.app
+
+#realestate #realtor #loanofficer #contentmarketing`,
+    note: 'Agents on LinkedIn are usually higher-producing. This post positions ContentVault as a production tool, not a beginner tool.'
+  }
+];
+
+function renderScripts() {
+  const container = document.getElementById('scripts-container');
+  container.innerHTML = SCRIPTS.map((s, i) => `
+    <div class="script-card">
+      <div class="script-label">${s.label}</div>
+      <div class="script-title">${s.title}</div>
+      <div class="script-body" id="script-body-${i}">${s.body}</div>
+      <div class="script-note">${s.note}</div>
+      <button class="copy-btn" id="copy-btn-${i}" onclick="copyScript(${i})">Copy Script</button>
+    </div>`).join('');
+}
+
+function copyScript(i) {
+  navigator.clipboard.writeText(SCRIPTS[i].body).then(() => {
+    const btn = document.getElementById('copy-btn-'+i);
+    btn.textContent = '✓ Copied';
+    btn.className = 'copy-btn copied';
+    setTimeout(() => { btn.textContent = 'Copy Script'; btn.className = 'copy-btn'; }, 2500);
+  });
+}
+
+// 30-DAY CALENDAR
+const CALENDAR = [
+  { week: 'Week 1 — Warm Outreach + First Posts', days: [
+    { day: 'Day 1', instagram: 'Post: Spring Market Snapshot (use AI generator)', outreach: 'DM 10 agents you know personally with warm script', linkedin: 'Publish RESPA compliance post' },
+    { day: 'Day 2', instagram: null, outreach: 'DM 10 LOs you know with warm LO script', linkedin: null },
+    { day: 'Day 3', instagram: 'Post: Rate Reality Check (LO template)', outreach: 'Follow up with anyone who opened Day 1 DMs', linkedin: null },
+    { day: 'Day 4', instagram: null, outreach: 'DM 10 more warm contacts (agents + LOs)', linkedin: null },
+    { day: 'Day 5', instagram: 'Post: Agent + LO Alignment (co-branded)', outreach: '5 cold DMs to agents found via #[market]realtor', linkedin: 'Post agent value prop LinkedIn post' },
+    { day: 'Day 6-7', instagram: null, outreach: 'Follow up all non-responders with free pack offer', linkedin: null },
+  ]},
+  { week: 'Week 2 — Scale Cold Outreach', days: [
+    { day: 'Day 8', instagram: 'Post: 5 Things Sellers Wish They Knew', outreach: '15 cold Instagram DMs to agents (500-5K followers)', linkedin: null },
+    { day: 'Day 9', instagram: null, outreach: '20 cold emails to agents (Zillow leads)', linkedin: null },
+    { day: 'Day 10', instagram: 'Post: Pre-approval vs Pre-qual', outreach: '15 cold DMs to LOs on Instagram', linkedin: null },
+    { day: 'Day 11', instagram: null, outreach: '20 cold emails to LOs (NMLS registry)', linkedin: 'Reply to all LinkedIn post comments — DM everyone who engaged' },
+    { day: 'Day 12', instagram: 'Post: Behind the Deal (co-branded)', outreach: 'Follow up all cold outreach from Days 8-11', linkedin: null },
+    { day: 'Day 13-14', instagram: null, outreach: 'Close anyone sitting on the fence — offer a 30-min call', linkedin: null },
+  ]},
+  { week: 'Week 3 — Proof + Referrals', days: [
+    { day: 'Day 15', instagram: 'Post: NAR Settlement Explainer (with your real take)', outreach: 'Ask every person who signed up for a referral', linkedin: 'Post about ContentVault publicly on LinkedIn for first time' },
+    { day: 'Day 16', instagram: null, outreach: '20 cold DMs — cold agents who posted less than 3x last month', linkedin: null },
+    { day: 'Day 17', instagram: 'Post: True Cost of Waiting for Rates', outreach: '20 cold emails — new batch from brokerage websites', linkedin: null },
+    { day: 'Day 18', instagram: null, outreach: 'Personal follow-up calls to anyone who said maybe', linkedin: null },
+    { day: 'Day 19', instagram: 'Post: Monthly Market Update email blast (send to your list too)', outreach: 'DM all Instagram followers who liked your posts this week', linkedin: null },
+    { day: 'Day 20-21', instagram: null, outreach: 'Take stock — how many members? What is working?', linkedin: null },
+  ]},
+  { week: 'Week 4 — Close + Compound', days: [
+    { day: 'Day 22', instagram: 'Post: Why I Got Into Real Estate (personal story)', outreach: 'Repost all your Week 1-3 content — reach people who missed it', linkedin: 'Post results: "X agents and LOs using ContentVault in [market]"' },
+    { day: 'Day 23', instagram: null, outreach: 'New batch of 20 cold DMs', linkedin: null },
+    { day: 'Day 24', instagram: 'Post: Credit Score post (LO template)', outreach: '20 cold emails with market-specific subject line', linkedin: null },
+    { day: 'Day 25', instagram: null, outreach: 'DM everyone who commented on any post — they are warm', linkedin: null },
+    { day: 'Day 26', instagram: 'Post: Referral Trigger (tag your agent / LO partner)', outreach: 'Founding rate deadline push — message all pipeline', linkedin: 'Final founding rate post: "Closing founding pricing this week"' },
+    { day: 'Day 27-30', instagram: 'Continue posting. The content compounds.', outreach: 'Close the founding window. Raise to $59/$89.', linkedin: null },
+  ]}
+];
+
+function renderCalendar() {
+  const container = document.getElementById('calendar-container');
+  container.innerHTML = CALENDAR.map(week => `
+    <div class="cal-week">
+      <div class="week-header">${week.week}</div>
+      ${week.days.map(d => `
+        <div class="day-row">
+          <div class="day-label">${d.day}</div>
+          ${d.instagram ? `<div class="day-item gold-border"><div class="item-channel instagram">Instagram</div><div class="item-task">${d.instagram}</div></div>` : '<div></div>'}
+          ${d.outreach ? `<div class="day-item blue-border"><div class="item-channel outreach">Outreach</div><div class="item-task">${d.outreach}</div></div>` : '<div></div>'}
+          ${d.linkedin ? `<div class="day-item green-border"><div class="item-channel linkedin">LinkedIn</div><div class="item-task">${d.linkedin}</div></div>` : '<div></div>'}
+        </div>`).join('')}
+    </div>`).join('');
+}
+</script>
+</body>
+</html>
