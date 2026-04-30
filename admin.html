@@ -71,6 +71,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
   <div class="tab" onclick="switchTab('directory')">Partner Directory</div>
   <div class="tab" onclick="switchTab('calendar')">Content Calendar</div>
   <div class="tab" onclick="switchTab('webhooks')">Integrations</div>
+  <div class="tab" onclick="switchTab('drip')">Drip Queue</div>
 </div>
 <main>
 
@@ -135,6 +136,24 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     </div>
   </div>
 
+  <!-- DRIP QUEUE TAB -->
+  <div class="tab-content" id="tab-drip">
+    <div class="stat-row">
+      <div class="stat"><div class="stat-val gold" id="drip-total">—</div><div class="stat-label">Total Queued</div></div>
+      <div class="stat"><div class="stat-val" id="drip-pending">—</div><div class="stat-label">Pending</div></div>
+      <div class="stat"><div class="stat-val" style="color:#5BB880" id="drip-sent">—</div><div class="stat-label">Sent</div></div>
+      <div class="stat"><div class="stat-val" style="color:#8B2020" id="drip-errors">—</div><div class="stat-label">Errors</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Drip Queue — 3-Email Upgrade Sequence</div>
+        <button class="refresh-btn" onclick="loadDrip()">↻ Refresh</button>
+      </div>
+      <div id="drip-table"><div class="loader">Loading drip queue...</div></div>
+      <div class="note">Processor runs every hour via pg_cron. Step 1 fires Day 1, Step 2 Day 3, Step 3 Day 6. Failed rows retry next hour automatically.</div>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -145,13 +164,14 @@ const H = {apikey:SK,Authorization:'Bearer '+SK};
 function switchTab(name){
   document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.remove('active');});
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  const tabs = ['signups','directory','calendar','webhooks'];
+  const tabs = ['signups','directory','calendar','webhooks','drip'];
   document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
   if(name==='signups')loadSignups();
   if(name==='directory')loadDirectory();
   if(name==='calendar')loadCalendar();
   if(name==='webhooks')loadWebhooks();
+  if(name==='drip')loadDrip();
 }
 
 function badge(role){
@@ -218,6 +238,33 @@ async function loadWebhooks(){
     data.forEach(d=>{html+='<div class="webhook-row"><div class="webhook-url">'+(d.url.length>60?d.url.slice(0,60)+'...':d.url)+'</div><span class="webhook-event">'+d.event+'</span><span class="wh-status '+(d.active?'wh-active':'wh-inactive')+'">'+(d.active?'Active':'Inactive')+'</span><div style="font-size:12px;color:rgba(232,224,208,0.4)">'+(d.label||'')+'</div></div>';});
     document.getElementById('webhooks-list').innerHTML=html;
   }catch(e){document.getElementById('webhooks-list').innerHTML='<div class="empty">Error: '+e.message+'</div>';}
+}
+
+
+async function loadDrip(){
+  try{
+    const r=await fetch(SB+'/cv_drip_queue?order=send_at.asc&limit=200',{headers:H});
+    const data=await r.json();
+    if(!Array.isArray(data)){document.getElementById('drip-table').innerHTML='<div class="empty">Error: '+JSON.stringify(data)+'</div>';return;}
+    const pending=data.filter(d=>!d.sent).length;
+    const sent=data.filter(d=>d.sent).length;
+    const errors=data.filter(d=>d.error&&!d.sent).length;
+    document.getElementById('drip-total').textContent=data.length;
+    document.getElementById('drip-pending').textContent=pending;
+    document.getElementById('drip-sent').textContent=sent;
+    document.getElementById('drip-errors').textContent=errors;
+    if(!data.length){document.getElementById('drip-table').innerHTML='<div class="empty">No drip rows yet. Rows appear when lead magnet signups occur.</div>';return;}
+    const stepLabel={1:'Day 1 — What you are missing',2:'Day 3 — RESPA / Referral loop',3:'Day 6 — Founding rate last chance'};
+    let html='<table><thead><tr><th>Send At</th><th>Email</th><th>Role</th><th>Step</th><th>Status</th><th>Sent At</th></tr></thead><tbody>';
+    data.forEach(d=>{
+      const due=new Date(d.send_at)<=new Date();
+      const statusColor=d.sent?'#5BB880':d.error?'#8B2020':due?'#D4964D':'rgba(232,224,208,0.4)';
+      const statusText=d.sent?'Sent':d.error?'Error':due?'Due now':'Scheduled';
+      html+='<tr><td class="mono">'+fmt(d.send_at)+'</td><td class="mono" style="font-size:12px">'+(d.email||'—')+'</td><td>'+badge(d.role)+'</td><td style="font-size:12px">'+(stepLabel[d.drip_step]||'Step '+d.drip_step)+'</td><td><span style="font-size:11px;color:'+statusColor+'">'+statusText+'</span></td><td class="mono" style="font-size:11px">'+(d.sent_at?fmt(d.sent_at):'—')+'</td></tr>';
+    });
+    html+='</tbody></table>';
+    document.getElementById('drip-table').innerHTML=html;
+  }catch(e){document.getElementById('drip-table').innerHTML='<div class="empty">Error: '+e.message+'</div>';}
 }
 
 // Init
